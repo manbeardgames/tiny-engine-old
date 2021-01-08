@@ -206,6 +206,38 @@ namespace Tiny
         }
 
         /// <summary>
+        ///     Changes the current active <see cref="Scene"/> to the one provided.
+        /// </summary>
+        /// <param name="to">
+        ///     The <see cref="Scene"/> instance to change to.
+        /// </param>
+        public void ChangeScene(Scene to)
+        {
+            _engine.ChangeScene(to);
+        }
+
+        /// <summary>
+        ///     Changes the current active <see cref="Scene"/> to the one provided using
+        ///     the <see cref="SceneTransition"/> instances given to transition the scenes
+        ///     in and out.
+        /// </summary>
+        /// <param name="to">
+        ///     The <see cref="Scene"/> instance to change to.
+        /// </param>
+        /// <param name="transitionOut">
+        ///     A <see cref="SceneTransition"/> instance that is used to transition the current
+        ///     active <see cref="Scene"/> out.
+        /// </param>
+        /// <param name="transitionIn">
+        ///     A <see cref="SceneTransition"/> instance that is used to transition next
+        ///     <see cref="Scene"/> in.
+        /// </param>
+        public void ChangeScene(Scene to, SceneTransition transitionOut, SceneTransition transitionIn)
+        {
+            _engine.ChangeScene(to, transitionOut, transitionIn);
+        }
+
+        /// <summary>
         ///     Generates the <see cref="RenderTarget"/> isntance for this scene.
         /// </summary>
         protected virtual void GenerateRenderTarget()
