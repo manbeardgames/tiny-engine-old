@@ -23,6 +23,9 @@ namespace Tiny
         //  The scale to render the text at.
         private Vector2 _scale;
 
+        //  The position to render the text at.
+        private Vector2 _position;
+
         /// <summary>
         ///     Gets or Sets a <see cref="string"/> value that represents
         ///     the text to use when rendering.
@@ -59,7 +62,15 @@ namespace Tiny
         ///     Gets or Sets a <see cref="Vector2"/> value that describes
         ///     the xy-coordinate position to render this at.
         /// </summary>
-        public Vector2 Position { get; set; }
+        public Vector2 Position
+        {
+            get { return _position; }
+            set
+            {
+                _position = value;
+                _position.Round();
+            }
+        }
 
         /// <summary>
         ///     Gets a <see cref="Vector2"/> value that describes the width
