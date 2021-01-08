@@ -38,7 +38,7 @@ namespace Tiny
             : this(engine, engine.Graphics.PixelPerUnit, TimeSpan.FromSeconds(1)) { }
 
         /// <summary>
-        ///     Creates a new EvenOddTransition instance.
+        ///     Creates a new <see cref="EvenOddTileTransition"/> instance.
         /// </summary>
         /// <param name="engine">
         ///     A reference to the <see cref="Engine"/> instance.
