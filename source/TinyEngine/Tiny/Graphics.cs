@@ -362,6 +362,170 @@ namespace Tiny
         }
 
         /// <summary>
+        ///     Clears buffer in the graphics device.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This is a shortcut method for calling <see cref="GraphicsDevice.Clear(Color)"/>
+        ///         passing to it the <see cref="ClearColor"/> value for the parameter value.
+        ///     </para>
+        /// </remarks>
+        public void Clear()
+        {
+            Clear(ClearColor);
+        }
+
+        /// <summary>
+        ///     Clears the buffer in the graphics device.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This is a shortcut method for calling <see cref="GraphicsDevice.Clear(Color)"/>
+        ///         passing ot it the <see cref="Color"/> value provided.
+        ///     </para>
+        /// </remarks>
+        /// <param name="color">
+        ///     A <see cref="Color"/> value to use when clearing the buffer.
+        /// </param>
+        public void Clear(Color color)
+        {
+            Device.Clear(color);
+        }
+
+        /// <summary>
+        ///     Clears the buffer of the graphics device.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This is a shortcut method that internally calls
+        ///         <see cref="GraphicsDevice.Clear(ClearOptions, Color, float, int)"/>, passing
+        ///         to it the parameters provided.
+        ///     </para>
+        /// </remarks>
+        /// <param name="options">
+        ///     A <see cref="ClearOptions"/> value that defines which buffers to clear.
+        /// </param>
+        /// <param name="color">
+        ///     A <see cref="Color"/> value to use when clearing the buffer.
+        /// </param>
+        /// <param name="depth">
+        ///     A <see cref="float"/> value that describes the depth to clear to.
+        /// </param>
+        /// <param name="stencil">
+        ///     A <see cref="float"/> value that describes the stencil value to clear to.
+        /// </param>
+        public void Clear(ClearOptions options, Color color, float depth, int stencil)
+        {
+            Device.Clear(options, color, depth, stencil);
+        }
+
+        /// <summary>
+        ///     Clears the buffer of the graphics device.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This is a shortcut method that internally calls
+        ///         <see cref="GraphicsDevice.Clear(ClearOptions, Vector4, float, int)"/>, passing
+        ///         to it the parameters provided.
+        ///     </para>
+        /// </remarks>
+        /// <param name="options">
+        ///     A <see cref="ClearOptions"/> value that defines which buffers to clear.
+        /// </param>
+        /// <param name="color">
+        ///     A <see cref="Color"/> value to use when clearing the buffer.
+        /// </param>
+        /// <param name="depth">
+        ///     A <see cref="float"/> value that describes the depth to clear to.
+        /// </param>
+        /// <param name="stencil">
+        ///     A <see cref="float"/> value that describes the stencil value to clear to.
+        /// </param>
+        public void Clear(ClearOptions options, Vector4 color, float depth, int stencil)
+        {
+            Device.Clear(options, color, depth, stencil);
+        }
+
+        /// <summary>
+        ///     Sets the <see cref="Microsoft.Xna.Framework.Graphics.Viewport"/> value of
+        ///     the <see cref="GraphicsDevice"/> to the <see cref="Viewport"/> value.
+        /// </summary>
+        public void SetViewport()
+        {
+            SetViewport(Viewport);
+        }
+
+        /// <summary>
+        ///     Sets the <see cref="Microsoft.Xna.Framework.Graphics.Viewport"/> value of
+        ///     the <see cref="GraphicsDevice"/> to the value given.
+        /// </summary>
+        /// <param name="viewport">
+        ///     The <see cref="Microsoft.Xna.Framework.Graphics.Viewport"/> value to set.
+        /// </param>
+        public void SetViewport(Viewport viewport)
+        {
+            Device.Viewport = viewport;
+        }
+
+        /// <summary>
+        ///     Sets the <see cref="RenderTarget2D"/> instance to render graphics to.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This is a shorcut method that internally calls
+        ///         <see cref="GraphicsDevice.SetRenderTarget(RenderTarget2D)"/>, passing to it
+        ///         the parameters provided.
+        ///     </para>
+        /// </remarks>
+        /// <param name="renderTarget">
+        ///     A <see cref="RenderTarget2D"/> instance to render the graphics to.
+        /// </param>
+        public void SetRenderTarget(RenderTarget2D renderTarget)
+        {
+            Device.SetRenderTarget(renderTarget);
+        }
+
+        /// <summary>
+        ///     Sets the <see cref="RenderTargetCube"/> instance to render graphics to.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This is a shorcut method that internally calls
+        ///         <see cref="GraphicsDevice.SetRenderTarget(RenderTargetCube, CubeMapFace)"/>,
+        ///         passing to it the parameters provided.
+        ///     </para>
+        /// </remarks>
+        /// <param name="renderTarget">
+        ///     A <see cref="RenderTargetCube"/> instance that represents a texture cube
+        ///     that can be used as a render target.
+        /// </param>
+        /// <param name="cubeMapFace">
+        ///     A <see cref="CubeMapFace"/> value that defines the face in a cube map.
+        /// </param>
+        public void SetRenderTarget(RenderTargetCube renderTarget, CubeMapFace cubeMapFace)
+        {
+            Device.SetRenderTarget(renderTarget, cubeMapFace);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This is a shorcut method that internally calls
+        ///         <see cref="GraphicsDevice.SetRenderTargets(RenderTargetBinding[])"/>,
+        ///         passing to it the parameters provided.
+        ///     </para>
+        /// </remarks>
+        /// <param name="renderTargets">
+        ///     The <see cref="RenderTargetBinding"/> values to set.
+        /// </param>
+        public void SeRenderTargets(params RenderTargetBinding[] renderTargets)
+        {
+            Device.SetRenderTargets(renderTargets);
+        }
+
+        /// <summary>
         ///     Updates the values for the graphics view such as the screen matrix and
         ///     viewport to provide independent resolution rendering.
         /// </summary>

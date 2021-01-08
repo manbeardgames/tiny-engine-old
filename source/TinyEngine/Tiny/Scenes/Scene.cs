@@ -47,6 +47,40 @@ namespace Tiny
         public RenderTarget2D RenderTarget { get; protected set; }
 
         /// <summary>
+        ///     Gets the <see cref="Microsoft.Xna.Framework.Graphics.SpriteBatch"/>
+        ///     instance used for rendering.
+        /// </summary>
+        public SpriteBatch SpriteBatch => _engine.SpriteBatch;
+
+        /// <summary>
+        ///     Gets the <see cref="Tiny.Graphics"/> instance used to manage and
+        ///     present the graphics.
+        /// </summary>
+        public Graphics Graphics => _engine.Graphics;
+
+        /// <summary>
+        ///     Gets the <see cref="Tiny.Time"/> instance which provides the
+        ///     timing values for each update frame.
+        /// </summary>
+        public Time Time => _engine.Time;
+
+        /// <summary>
+        ///     Gets the <see cref="ContentManager"/> instance used to load global
+        ///     content.
+        /// </summary>
+        public ContentManager GlobalContent => _engine.Content;
+
+        /// <summary>
+        ///     Gets the <see cref="ContentManager"/> instance used to load content
+        ///     specific for this scene. 
+        /// </summary>
+        /// <remarks>
+        ///     Any content loaded through this <see cref="ContentManager"/> will
+        ///     be unloaded when switch from this scene to another scene.s
+        /// </remarks>
+        public ContentManager Content => _content;
+
+        /// <summary>
         ///     Creates a new <see cref="Scene"/> instance.
         /// </summary>
         /// <param name="engine">
