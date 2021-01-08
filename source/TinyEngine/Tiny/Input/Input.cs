@@ -64,7 +64,6 @@ namespace Tiny
             }
 
             VirtualInputs = new List<VirtualInput>();
-
         }
 
         /// <summary>
@@ -80,7 +79,7 @@ namespace Tiny
                 GamePads[i].Update(time);
             }
 
-            for(int i = 0; i < VirtualInputs.Count; i++)
+            for (int i = 0; i < VirtualInputs.Count; i++)
             {
                 VirtualInputs[i].Update(time);
             }
