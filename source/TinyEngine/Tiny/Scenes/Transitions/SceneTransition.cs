@@ -81,6 +81,24 @@ namespace Tiny
         public RenderTarget2D RenderTarget { get; private set; }
 
         /// <summary>
+        ///     Gets the <see cref="Microsoft.Xna.Framework.Graphics.SpriteBatch"/>
+        ///     instance used for rendering.
+        /// </summary>
+        public SpriteBatch SpriteBatch => _engine.SpriteBatch;
+
+        /// <summary>
+        ///     Gets the <see cref="Tiny.Graphics"/> instance used to manage and
+        ///     present the graphics.
+        /// </summary>
+        public Graphics Graphics => _engine.Graphics;
+
+        /// <summary>
+        ///     Gets the <see cref="Tiny.Time"/> instance which provides the
+        ///     timing values for each update frame.
+        /// </summary>
+        public Time Time => _engine.Time;
+
+        /// <summary>
         ///     An <see cref="event"/> that will be triggered when this transition
         ///     has been completed.
         /// </summary>
@@ -135,7 +153,7 @@ namespace Tiny
         /// </remarks>
         public virtual void Update()
         {
-            TransitionTimeRemaining -= _engine.Time.ElapsedGameTime;
+            TransitionTimeRemaining -= Time.ElapsedGameTime;
 
             if (TransitionTimeRemaining <= TimeSpan.Zero)
             {
@@ -171,12 +189,12 @@ namespace Tiny
         protected virtual void BeginDraw()
         {
             //  Prepare the graphics device
-            _engine.Graphics.Device.SetRenderTarget(RenderTarget);
-            _engine.Graphics.Device.Viewport = new Viewport(RenderTarget.Bounds);
-            _engine.Graphics.Device.Clear(_engine.Graphics.ClearColor);
+            Graphics.SetRenderTarget(RenderTarget);
+            Graphics.SetViewport(new Viewport(RenderTarget.Bounds));
+            Graphics.Clear();
 
-            _engine.SpriteBatch.Begin(blendState: BlendState.AlphaBlend,
-                                      samplerState: SamplerState.PointClamp);
+            SpriteBatch.Begin(blendState: BlendState.AlphaBlend,
+                              samplerState: SamplerState.PointClamp);
         }
 
         /// <summary>
@@ -204,8 +222,8 @@ namespace Tiny
         ///     </para>
         protected virtual void EndDraw()
         {
-            _engine.SpriteBatch.End();
-            _engine.Graphics.Device.SetRenderTarget(null);
+            SpriteBatch.End();
+            Graphics.Device.SetRenderTarget(null);
         }
 
         /// <summary>
@@ -253,9 +271,9 @@ namespace Tiny
                 RenderTarget.Dispose();
             }
 
-            RenderTarget = new RenderTarget2D(graphicsDevice: _engine.Graphics.Device,
-                                              width: _engine.Graphics.Resolution.X,
-                                              height: _engine.Graphics.Resolution.Y,
+            RenderTarget = new RenderTarget2D(graphicsDevice: Graphics.Device,
+                                              width: Graphics.Resolution.X,
+                                              height: Graphics.Resolution.Y,
                                               mipMap: false,
                                               preferredFormat: SurfaceFormat.Color,
                                               preferredDepthFormat: DepthFormat.Depth24Stencil8,
