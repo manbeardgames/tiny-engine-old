@@ -173,20 +173,45 @@ namespace Tiny
                 {
                     _nextScene = to;
                     _transitionOut = transitionOut;
-                    _transitionOut.Kind = SceneTransitionKind.Out;
+
+                    if (_transitionOut != null)
+                    {
+                        _transitionOut.Kind = SceneTransitionKind.Out;
+                    }
 
                     _transitionIn = transitionIn;
-                    _transitionIn.Kind = SceneTransitionKind.In;
+
+                    if (_transitionIn != null)
+                    {
+                        _transitionIn.Kind = SceneTransitionKind.In;
+                    }
 
                     //  Subscribe to the transition compoleted events for each
-                    _transitionOut.TransitionCompleted += TransitionOutCompleted;
-                    _transitionIn.TransitionCompleted += TransitionInCompleted;
+                    if (_transitionOut != null)
+                    {
+                        _transitionOut.TransitionCompleted += TransitionOutCompleted;
+                    }
 
-                    //  Set the current active transition to the out transition first
-                    _activeTransition = _transitionOut;
+                    if (_transitionIn != null)
+                    {
+                        _transitionIn.TransitionCompleted += TransitionInCompleted;
+                    }
 
-                    //  Start the current transition
-                    _activeTransition.Start(_activeScene.RenderTarget);
+                    //  Set the current active transition
+                    if (_transitionOut != null)
+                    {
+                        _activeTransition = _transitionOut;
+                        _activeTransition.Start(_activeScene.RenderTarget);
+                    }
+                    else
+                    {
+                        if(_transitionIn != null)
+                        {
+                            TransitionScene();
+                            _activeTransition = _transitionIn;
+                            _activeTransition.Start(_activeScene.RenderTarget);
+                        }
+                    }
                 }
             }
         }

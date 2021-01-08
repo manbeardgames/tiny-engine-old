@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Tiny.Scenes.Transitions
+namespace Tiny
 {
     /// <summary>
     ///     A transition that divides the scene into a checkerboard and spins out/in the odd tiles
