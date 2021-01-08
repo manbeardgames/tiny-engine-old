@@ -17,7 +17,7 @@ As TinyEngine is still in development, there is currently no documentation to pr
 ## License
 MIT License
 
-Copyright (c) 2018 Christopher Whitley
+Copyright (c) 2020 Christopher Whitley
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
