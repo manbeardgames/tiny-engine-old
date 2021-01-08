@@ -271,5 +271,13 @@ namespace Tiny
             _halfSize = _size * 0.5f;
         }
 
+        /// <summary>
+        ///     Center the <see cref="Origin"/> point of the text.
+        /// </summary>
+        public void CenterOrigin()
+        {
+            Origin = _halfSize;
+        }
+
     }
 }
