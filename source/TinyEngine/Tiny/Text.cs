@@ -14,6 +14,10 @@ namespace Tiny
         //  The font used when rendering this text.
         private SpriteFont _font;
 
+        //  The width and height size of the text disregarding
+        //  the scale value given.
+        private Vector2 _rawSize;
+
         //  The width and height size of the text when rendered.
         private Vector2 _size;
 
@@ -281,7 +285,8 @@ namespace Tiny
         /// </summary>
         private void SetSize()
         {
-            _size = _font.MeasureString(_value) * _scale;
+            _rawSize = _font.MeasureString(_value);
+            _size = _rawSize * _scale;
             _halfSize = _size * 0.5f;
         }
 
@@ -290,7 +295,7 @@ namespace Tiny
         /// </summary>
         public void CenterOrigin()
         {
-            Origin = _halfSize;
+            Origin = _rawSize * 0.5f;
         }
 
     }
