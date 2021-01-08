@@ -134,6 +134,24 @@ namespace Tiny
         ///     A <see cref="Vector2"/> value that describes the xy-coordinate
         ///     position to render this at.
         /// </param>
+        public Text(SpriteFont font, string text)
+            : this(font, text, Vector2.Zero, Color.White, 0.0f, Vector2.Zero, Vector2.One) { }
+
+        /// <summary>
+        ///     Creates a new <see cref="Text"/> instance.
+        /// </summary>
+        /// <param name="font">
+        ///     A <see cref="SpriteFont"/> value that represents the font to
+        ///     use when rendering.
+        /// </param>
+        /// <param name="text">
+        ///     A <see cref="string"/> value that represents the text to
+        ///     use when rendering.
+        /// </param>
+        /// <param name="position">
+        ///     A <see cref="Vector2"/> value that describes the xy-coordinate
+        ///     position to render this at.
+        /// </param>
         public Text(SpriteFont font, string text, Vector2 position)
             : this(font, text, position, Color.White, 0.0f, Vector2.Zero, Vector2.One) { }
 
