@@ -48,6 +48,24 @@ namespace Tiny
         }
 
         /// <summary>
+        ///     Draws a hollow rectangle.
+        /// </summary>
+        /// <param name="spriteBatch">
+        ///     The <see cref="SpriteBatch"/> instance used for rendering.
+        /// </param>
+        /// <param name="rect">
+        ///     A <see cref="Rectangle"/> value that describes the bounds of the hollow
+        ///     rectangle to render.
+        /// </param>
+        /// <param name="color">
+        ///     A <see cref="Color"/> value to use as the color mask when rendering the hollow rectangle.
+        /// </param>
+        public static void DrawHollowRectangle(this SpriteBatch spriteBatch, Rectangle rect, Color color)
+        {
+            spriteBatch.DrawHollowRectangle(rect.X, rect.Y, rect.Width, rect.Height, color);
+        }
+
+        /// <summary>
         ///     Renders a hollow rectangle.
         /// </summary>
         /// <param name="spriteBatch">
