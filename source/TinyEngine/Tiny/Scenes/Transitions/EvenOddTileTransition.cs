@@ -23,6 +23,21 @@ namespace Tiny
         private int _rows;
 
         /// <summary>
+        ///     Creates a new <see cref="EvenOddTileTransition"/> instance with a default
+        ///     time of 1 second.
+        /// </summary>
+        /// <remarks>
+        ///     WARNING: This constructor uses the <see cref="Graphics.PixelPerUnit"/> value
+        ///     as the tilesize value for this transition. This constructor will only
+        ///     work if you have set that value. 
+        /// </remarks>
+        /// <param name="engine">
+        ///     A reference to the <see cref="Engine"/> instance.
+        /// </param>
+        public EvenOddTileTransition(Engine engine)
+            : this(engine, engine.Graphics.PixelPerUnit, TimeSpan.FromSeconds(1)) { }
+
+        /// <summary>
         ///     Creates a new EvenOddTransition instance.
         /// </summary>
         /// <param name="engine">

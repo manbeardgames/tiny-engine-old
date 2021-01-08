@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace Tiny
@@ -10,6 +8,16 @@ namespace Tiny
     /// </summary>
     public class FadeTransition : SceneTransition
     {
+        /// <summary>
+        ///     Creates a new <see cref="FadeTransition"/> instance with with
+        ///     a default time of 1 second.
+        /// </summary>
+        /// <param name="engine">
+        ///     A reference to the <see cref="Engine"/> instance.
+        /// </param>
+        public FadeTransition(Engine engine)
+            : this(engine, TimeSpan.FromSeconds(1)) { }
+
         /// <summary>
         ///     Creates a new <see cref="FadeTransition"/> instance.
         /// </summary>
