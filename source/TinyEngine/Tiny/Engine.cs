@@ -41,16 +41,31 @@ namespace Tiny
         private readonly FPS _fps;
 #endif
 
+        //  The current active scene.
+        private Scene _activeScene;
+
+        //  The next scene to transition to.
+        private Scene _nextScene;
+
+        //  The scene transition to use when transitioning out the current active scene.
+        private SceneTransition _transitionOut;
+
+        //  The scene transition to use when transitioning in the next scene.
+        private SceneTransition _transitionIn;
+
+        //  The current active scene trasntion being used.
+        private SceneTransition _activeTransition;
+
         /// <summary>
         ///     Gets the <see cref="SpriteBatch"/> instance used for rendering.
         /// </summary>
         public SpriteBatch SpriteBatch { get; private set; }
 
-        /// <summary>
-        ///     Gets the <see cref="SceneManager"/> instance used to manage the
-        ///     scenes for the game.
-        /// </summary>
-        public SceneManager Scene { get; private set; }
+        ///// <summary>
+        /////     Gets the <see cref="SceneManager"/> instance used to manage the
+        /////     scenes for the game.
+        ///// </summary>
+        //public SceneManager Scene { get; private set; }
 
         /// <summary>
         ///     Gets the <see cref="Tiny.Graphics"/> instance used to control and maange the
@@ -115,8 +130,8 @@ namespace Tiny
             //  Set the root directory for contnet
             Content.RootDirectory = @"Content";
 
-            //  Initialize the Scene system
-            Scene = new SceneManager(this);
+            ////  Initialize the Scene system
+            //Scene = new SceneManager(this);
 
             //  Initilize the timing system
             Time = new Time();
@@ -144,7 +159,26 @@ namespace Tiny
         /// </summary>
         protected virtual void OnClientSizeChanged(object sender, EventArgs e)
         {
-            Scene.HandleClientSizeChanged();
+            //Scene.HandleClientSizeChanged();
+            if (_activeScene != null)
+            {
+                _activeScene.HandleClientSizeChanged();
+            }
+
+            if (_nextScene != null)
+            {
+                _nextScene.HandleClientSizeChanged();
+            }
+
+            if (_transitionOut != null)
+            {
+                _transitionOut.HandleClientSizeChanged();
+            }
+
+            if (_transitionIn != null)
+            {
+                _transitionIn.HandleClientSizeChanged();
+            }
         }
 
         /// <summary>
@@ -154,7 +188,26 @@ namespace Tiny
         /// </summary>
         protected virtual void OnGraphicsDeviceCreated(object sender, EventArgs e)
         {
-            Scene.HandleGraphicsDeviceCreated();
+            //Scene.HandleGraphicsDeviceCreated();
+            if (_activeScene != null)
+            {
+                _activeScene.HandleGraphicsDeviceCreated();
+            }
+
+            if (_nextScene != null)
+            {
+                _nextScene.HandleGraphicsDeviceCreated();
+            }
+
+            if (_transitionOut != null)
+            {
+                _transitionOut.HandleGraphicsDeviceCreated();
+            }
+
+            if (_transitionIn != null)
+            {
+                _transitionIn.HandleGraphicsDeviceCreated();
+            }
         }
 
         /// <summary>
@@ -165,7 +218,26 @@ namespace Tiny
         /// </summary>
         protected virtual void OnGraphicsDeviceReset(object sender, EventArgs e)
         {
-            Scene.HandleGraphicsDeviceReset();
+            //Scene.HandleGraphicsDeviceReset();
+            if (_activeScene != null)
+            {
+                _activeScene.HandleGraphicsDeviceReset();
+            }
+
+            if (_nextScene != null)
+            {
+                _nextScene.HandleGraphicsDeviceReset();
+            }
+
+            if (_transitionOut != null)
+            {
+                _transitionOut.HandleGraphicsDeviceReset();
+            }
+
+            if (_transitionIn != null)
+            {
+                _transitionIn.HandleGraphicsDeviceReset();
+            }
         }
 
         /// <summary>
@@ -217,8 +289,26 @@ namespace Tiny
             //  Update the input state
             Input.Update(Time);
 
-            //  Update the current scene.
-            Scene.Update();
+            //  If there is an active transition, then we need to update it; otherwise, if there
+            //  is no active transition, but there is a next scene to switch to, switch to that
+            //  scene instead.
+            if (_activeTransition != null && _activeTransition.IsTransitioning)
+            {
+                _activeTransition.Update();
+            }
+            else if (_activeTransition == null && _nextScene != null)
+            {
+                TransitionScene();
+            }
+
+            //  If there is a current active scene, update it.
+            if (_activeScene != null)
+            {
+                _activeScene.Update();
+            }
+
+            ////  Update the current scene
+            //Scene.Update();
 
             //  Always ensure we call base.Update() at the end of this.
             base.Update(gameTime);
@@ -234,7 +324,8 @@ namespace Tiny
         /// </param>
         protected override void Draw(GameTime gameTime)
         {
-            Scene.Draw();
+            //Scene.Draw();
+            DrawCore();
 
             //  Always ensure we call base.Render().
             base.Draw(gameTime);
@@ -248,7 +339,207 @@ namespace Tiny
                 Window.Title = $"{Title} | {_fps.FrameRate}fps | {memoryUsage:F}MB";
             }
 #endif
+        }
 
+        private void DrawCore()
+        {
+            //  If there is an active scene to draw, draw it.
+            if (_activeScene != null)
+            {
+                _activeScene.Draw();
+            }
+
+            //  If there is an active transition happening, render the transition
+            if (_activeTransition != null && _activeTransition.IsTransitioning)
+            {
+                _activeTransition.Render();
+            }
+
+            //  Prepare the grpahics device for the final render.
+            Graphics.Clear();
+
+            DrawAlways();
+
+            //  Begin the spritebatch
+            SpriteBatch.Begin(blendState: BlendState.AlphaBlend,
+                              samplerState: SamplerState.PointClamp,
+                              transformMatrix: Graphics.ScreenMatrix);
+
+            //  If there is an active transition we draw its render target; otherwise, we draw 
+            //  the render target of the active scene
+            if (_activeTransition != null && _activeTransition.IsTransitioning)
+            {
+                SpriteBatch.Draw(texture: _activeTransition.RenderTarget,
+                                 destinationRectangle: _activeTransition.RenderTarget.Bounds,
+                                 sourceRectangle: _activeTransition.RenderTarget.Bounds,
+                                 color: Color.White);
+            }
+            else if (_activeScene != null)
+            {
+
+                SpriteBatch.Draw(texture: _activeScene.RenderTarget,
+                                 destinationRectangle: _activeScene.RenderTarget.Bounds,
+                                 sourceRectangle: _activeScene.RenderTarget.Bounds,
+                                 color: Color.White);
+            }
+
+            //  End the sprite batch
+            SpriteBatch.End();
+        }
+
+        protected virtual void DrawAlways() { }
+
+        /// <summary>
+        ///     Changes the current active <see cref="Scene"/> to the one provided.
+        /// </summary>
+        /// <param name="to">
+        ///     The <see cref="Scene"/> instance to change to.
+        /// </param>
+        public void ChangeScene(Scene to)
+        {
+            //  Only set the next scene if the Scene instance given is not the
+            //  same Scene instance that is the current active scene
+            if (_activeScene != to)
+            {
+                _nextScene = to;
+            }
+        }
+
+        /// <summary>
+        ///     Changes the current active <see cref="Scene"/> to the one provided using
+        ///     the <see cref="SceneTransition"/> instances given to transition the scenes
+        ///     in and out.
+        /// </summary>
+        /// <param name="to">
+        ///     The <see cref="Scene"/> instance to change to.
+        /// </param>
+        /// <param name="transitionOut">
+        ///     A <see cref="SceneTransition"/> instance that is used to transition the current
+        ///     active <see cref="Scene"/> out.
+        /// </param>
+        /// <param name="transitionIn">
+        ///     A <see cref="SceneTransition"/> instance that is used to transition next
+        ///     <see cref="Scene"/> in.
+        /// </param>
+        public void ChangeScene(Scene to, SceneTransition transitionOut, SceneTransition transitionIn)
+        {
+            if (_activeTransition == null || !_activeTransition.IsTransitioning)
+            {
+                if (_activeScene != to)
+                {
+                    _nextScene = to;
+                    _transitionOut = transitionOut;
+
+                    if (_transitionOut != null)
+                    {
+                        _transitionOut.Kind = SceneTransitionKind.Out;
+                    }
+
+                    _transitionIn = transitionIn;
+
+                    if (_transitionIn != null)
+                    {
+                        _transitionIn.Kind = SceneTransitionKind.In;
+                    }
+
+                    //  Subscribe to the transition compoleted events for each
+                    if (_transitionOut != null)
+                    {
+                        _transitionOut.TransitionCompleted += TransitionOutCompleted;
+                    }
+
+                    if (_transitionIn != null)
+                    {
+                        _transitionIn.TransitionCompleted += TransitionInCompleted;
+                    }
+
+                    //  Set the current active transition
+                    if (_transitionOut != null)
+                    {
+                        _activeTransition = _transitionOut;
+                        _activeTransition.Start(_activeScene.RenderTarget);
+                    }
+                    else
+                    {
+                        if (_transitionIn != null)
+                        {
+                            TransitionScene();
+                            _activeTransition = _transitionIn;
+                            _activeTransition.Start(_activeScene.RenderTarget);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Handles the logic when the <see cref="_transitionOut"/> instance 
+        ///     triggers the <see cref="SceneTransition.TransitionCompleted"/> event.
+        /// </summary>
+        private void TransitionOutCompleted(object sender, EventArgs e)
+        {
+            //  Unsubscribe from the event so we don't leave any lingering references
+            _transitionOut.TransitionCompleted -= TransitionOutCompleted;
+
+            //  Dispose of the instance
+            _transitionOut.Dispose();
+            _transitionOut = null;
+
+            //  Change the scene
+            TransitionScene();
+
+            //  Set the current transition to the in transition and start it
+            _activeTransition = _transitionIn;
+            _activeTransition.Start(_activeScene.RenderTarget);
+        }
+
+        /// <summary>
+        ///     Handles the logic when the <see cref="_transitionIn"/> instance
+        ///     triggers the <see cref="SceneTransition.TransitionCompleted"/> event.
+        /// </summary>
+        private void TransitionInCompleted(object sender, EventArgs e)
+        {
+            //  Unsubscribe from the event so we don't leave any lingering references
+            _transitionIn.TransitionCompleted -= TransitionInCompleted;
+
+            //  Dipsoe of the instance
+            _transitionIn.Dispose();
+            _transitionIn = null;
+
+            //  Set the active transition to null
+            _activeTransition = null;
+        }
+
+        /// <summary>
+        ///     Transitions from the current active <see cref="Scene"/> to the next
+        ///     <see cref="Scene"/>.
+        /// </summary>
+        private void TransitionScene()
+        {
+            //  If there is an active scene, unload the content from the scene.
+            if (_activeScene != null)
+            {
+                _activeScene.UnloadContent();
+            }
+
+            //  Perform garbage collection to ensure memory is cleared
+            GC.Collect();
+
+            //  Set the active scene to the next scene
+            _activeScene = _nextScene;
+
+            //  Set the time rate to default 1.0
+            Time.TimeRate = 1.0f;
+
+            //  Null out the _nextScene field so we don't keep trying to transition
+            _nextScene = null;
+
+            //  If the now active scene is not null, initilize it here.
+            //  Reminder that the Initialize(0 method calls the LoadContnet method
+            if (_activeScene != null)
+            {
+                _activeScene.Initialize();
+            }
         }
     }
 }
