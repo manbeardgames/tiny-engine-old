@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Tiny
@@ -29,6 +30,9 @@ namespace Tiny
 
         //  The position to render the text at.
         private Vector2 _position;
+
+        //  The rectangular bounds of this text when rendered.
+        private Rectangle _bounds;
 
         /// <summary>
         ///     Gets or Sets a <see cref="string"/> value that represents
@@ -133,6 +137,12 @@ namespace Tiny
         ///     depth of the text when rendered.
         /// </summary>
         public float LayerDepth { get; set; }
+
+        /// <summary>
+        ///     Gets a <see cref="Rectangle"/> value that describes the bounding area
+        ///     of this text when rendered.
+        /// </summary>
+        public Rectangle Bounds => _bounds;
 
         /// <summary>
         ///     Creates a new <see cref="Text"/> instance.
@@ -288,6 +298,21 @@ namespace Tiny
             _rawSize = _font.MeasureString(_value);
             _size = _rawSize * _scale;
             _halfSize = _size * 0.5f;
+            SetBounds();
+        }
+
+        /// <summary>
+        ///     Sets the bounds of this text when rendered.
+        /// </summary>
+        private void SetBounds()
+        {
+            _bounds = new Rectangle
+            {
+                X = (int)Math.Floor(_position.X - (Origin.X * _scale.X)),
+                Y = (int)Math.Floor(_position.Y - (Origin.Y * _scale.Y)),
+                Width = (int)Math.Floor(_size.X),
+                Height = (int)Math.Floor(_size.Y)
+            };
         }
 
         /// <summary>
@@ -296,6 +321,7 @@ namespace Tiny
         public void CenterOrigin()
         {
             Origin = _rawSize * 0.5f;
+            SetBounds();
         }
 
     }
