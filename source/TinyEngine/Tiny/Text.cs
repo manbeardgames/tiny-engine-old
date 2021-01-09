@@ -77,6 +77,7 @@ namespace Tiny
             {
                 _position = value;
                 _position.Round();
+                SetBounds();
             }
         }
 

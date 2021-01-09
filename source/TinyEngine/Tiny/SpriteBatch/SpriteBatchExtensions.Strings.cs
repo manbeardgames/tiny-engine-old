@@ -7,7 +7,7 @@ namespace Tiny
     public static partial class SpriteBatchExtensions
     {
         /// <summary>
-        ///     Draws a <see cref="string"/> value with an outline applied to it.
+        ///     Draws a <see cref="Text"/> instance to the screen.
         /// </summary>
         /// <param name="spriteBatch">
         ///     The <see cref="SpriteBatch"/> instance being used for rendering.
@@ -18,6 +18,23 @@ namespace Tiny
         public static void DrawString(this SpriteBatch spriteBatch, Text text)
         {
             spriteBatch.DrawString(text.Font, text.Value, text.Position, text.Color, text.Rotation, text.Origin, text.Scale, text.Effect, text.LayerDepth);
+        }
+
+        /// <summary>
+        ///     Draws a <see cref="TextBuilder"/> instance to the screen.
+        /// </summary>
+        /// <param name="spriteBatch">
+        ///     The <see cref="SpriteBatch"/> instance being used for rendering.
+        /// </param>
+        /// <param name="text">
+        ///     A <see cref="TextBuilder"/> instance that describes the text to render.
+        /// </param>
+        public static void DrawString(this SpriteBatch spriteBatch, TextBuilder text)
+        {
+            for(int i = 0; i < text.Text.Count; i++)
+            {
+                spriteBatch.DrawString(text.Text[i]);
+            }
         }
 
         /// <summary>
@@ -37,6 +54,8 @@ namespace Tiny
         {
             spriteBatch.DrawStringOutlined(text.Font, text.Value, text.Position, text.Color, outlineColor, text.Rotation, text.Origin, text.Scale, text.Effect, text.LayerDepth);
         }
+
+
 
         /// <summary>
         ///     Draws a <see cref="string"/> value with an outline applied to it.
