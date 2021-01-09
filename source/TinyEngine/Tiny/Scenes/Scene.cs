@@ -65,6 +65,15 @@ namespace Tiny
         public Time Time => _engine.Time;
 
         /// <summary>
+        ///     Gets or Sets a <see cref="bool"/> value indicating if this
+        ///     scene is paused. 
+        /// </summary>
+        /// <remarks>
+        ///     When paused, the update method will be skipped for this scene.
+        /// </remarks>
+        public bool Paused { get; set; }
+
+        /// <summary>
         ///     Gets the <see cref="ContentManager"/> instance used to load global
         ///     content.
         /// </summary>
@@ -95,7 +104,29 @@ namespace Tiny
             }
 
             _engine = engine;
+            Paused = true;
         }
+
+        /// <summary>
+        ///     Called internally by TinyEngine on the first update frame
+        ///     after the scene has been fully transitioned into.
+        /// </summary>
+        internal void Begin()
+        {
+            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}]: Scene Begin");
+            Paused = false;
+            Start();
+        }
+
+        /// <summary>
+        ///     Perform any logic that should occur at the start of the scene here.
+        /// </summary>
+        /// <remarks>
+        ///     This is called only once, on the first frame after the scene has been
+        ///     fully transitioned into, but before the first update for the scene
+        ///     has occured.
+        /// </remarks>
+        public virtual void Start() { }
 
         /// <summary>
         ///     Perform all scene initilizations here. 

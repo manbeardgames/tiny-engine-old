@@ -299,6 +299,7 @@ namespace Tiny
             else if (_activeTransition == null && _nextScene != null)
             {
                 TransitionScene();
+                _activeScene.Begin();
             }
 
             //  If there is a current active scene, update it.
@@ -488,9 +489,17 @@ namespace Tiny
             //  Change the scene
             TransitionScene();
 
-            //  Set the current transition to the in transition and start it
-            _activeTransition = _transitionIn;
-            _activeTransition.Start(_activeScene.RenderTarget);
+            if (_transitionIn == null)
+            {
+                _activeTransition = null;
+                _activeScene.Begin();
+            }
+            else
+            {
+                //  Set the current transition to the in transition and start it
+                _activeTransition = _transitionIn;
+                _activeTransition.Start(_activeScene.RenderTarget);
+            }
         }
 
         /// <summary>
@@ -502,12 +511,15 @@ namespace Tiny
             //  Unsubscribe from the event so we don't leave any lingering references
             _transitionIn.TransitionCompleted -= TransitionInCompleted;
 
-            //  Dipsoe of the instance
+            //  Dispose of the instance
             _transitionIn.Dispose();
             _transitionIn = null;
 
             //  Set the active transition to null
             _activeTransition = null;
+
+            //  Tell the scene it has begun
+            _activeScene.Begin();
         }
 
         /// <summary>
@@ -535,7 +547,7 @@ namespace Tiny
             _nextScene = null;
 
             //  If the now active scene is not null, initilize it here.
-            //  Reminder that the Initialize(0 method calls the LoadContnet method
+            //  Reminder that the Initialize() method calls the LoadContnet method
             if (_activeScene != null)
             {
                 _activeScene.Initialize();
