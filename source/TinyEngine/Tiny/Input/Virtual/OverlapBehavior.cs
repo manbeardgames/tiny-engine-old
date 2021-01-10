@@ -28,7 +28,7 @@ namespace Tiny
     ///     Defines value that describe the behavior to take when two inputs for a
     ///     single axis of a <see cref="VirtualJoystick.Node"/> are detected.
     /// </summary>
-    public enum InputOverlapBehavior
+    public enum OverlapBehavior
     {
         /// <summary>
         ///     Describes that the inputs should cance each other out.

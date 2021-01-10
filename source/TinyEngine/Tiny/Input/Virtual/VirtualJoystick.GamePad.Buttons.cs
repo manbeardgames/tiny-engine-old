@@ -46,10 +46,10 @@ namespace Tiny
                 public override Vector2 Value => _value;
 
                 /// <summary>
-                ///     Gets or Sets the <see cref="Tiny.InputOverlapBehavior"/> value to use
+                ///     Gets or Sets the <see cref="Tiny.OverlapBehavior"/> value to use
                 ///     when two or more inputs are detected.
                 /// </summary>
-                public InputOverlapBehavior OverlapBehavior { get; set; }
+                public OverlapBehavior OverlapBehavior { get; set; }
 
                 /// <summary>
                 ///     Gets or Sets the <see cref="Microsoft.Xna.Framework.Input.Buttons"/> value that represents pushing
@@ -83,7 +83,7 @@ namespace Tiny
                 ///     index of the gamepad this will pull values from.
                 /// </param>
                 /// <param name="behavior">
-                ///     A <see cref="Tiny.InputOverlapBehavior"/> value to use when two or
+                ///     A <see cref="Tiny.OverlapBehavior"/> value to use when two or
                 ///     more inputs are detected at the same time.
                 /// </param>
                 /// <param name="up">
@@ -107,7 +107,7 @@ namespace Tiny
                 ///     right.
                 /// </param>
                 public Buttons(PlayerIndex index,
-                              InputOverlapBehavior behavior,
+                              OverlapBehavior behavior,
                               Microsoft.Xna.Framework.Input.Buttons up,
                               Microsoft.Xna.Framework.Input.Buttons down,
                               Microsoft.Xna.Framework.Input.Buttons left,
@@ -122,7 +122,7 @@ namespace Tiny
                 ///     gamepad this will pull values from.
                 /// </param>
                 /// <param name="behavior">
-                ///     A <see cref="Tiny.InputOverlapBehavior"/> value to use when two or
+                ///     A <see cref="Tiny.OverlapBehavior"/> value to use when two or
                 ///     more inputs are detected at the same time.
                 /// </param>
                 /// <param name="up">
@@ -146,7 +146,7 @@ namespace Tiny
                 ///     right.
                 /// </param>
                 public Buttons(int index,
-                              InputOverlapBehavior behavior,
+                              OverlapBehavior behavior,
                               Microsoft.Xna.Framework.Input.Buttons up,
                               Microsoft.Xna.Framework.Input.Buttons down,
                               Microsoft.Xna.Framework.Input.Buttons left,
@@ -182,13 +182,13 @@ namespace Tiny
                             switch (OverlapBehavior)
                             {
                                 default:
-                                case InputOverlapBehavior.Cancel:
+                                case OverlapBehavior.Cancel:
                                     _value.Y = 0;
                                     break;
-                                case InputOverlapBehavior.Positive:
+                                case OverlapBehavior.Positive:
                                     _value.Y = 1;
                                     break;
-                                case InputOverlapBehavior.Negative:
+                                case OverlapBehavior.Negative:
                                     _value.Y = -1;
                                     break;
                             }
@@ -217,13 +217,13 @@ namespace Tiny
                             switch (OverlapBehavior)
                             {
                                 default:
-                                case InputOverlapBehavior.Cancel:
+                                case OverlapBehavior.Cancel:
                                     _value.X = 0;
                                     break;
-                                case InputOverlapBehavior.Positive:
+                                case OverlapBehavior.Positive:
                                     _value.X = 1;
                                     break;
-                                case InputOverlapBehavior.Negative:
+                                case OverlapBehavior.Negative:
                                     _value.X = -1;
                                     break;
                                     
