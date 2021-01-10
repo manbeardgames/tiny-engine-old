@@ -43,10 +43,10 @@ namespace Tiny
                 public override Vector2 Value => _value;
 
                 /// <summary>
-                ///     Gets or Sets the <see cref="Tiny.OverlapBehavior"/> value to use
+                ///     Gets or Sets the <see cref="Tiny.InputOverlapBehavior"/> value to use
                 ///     when two or more inputs are detected.
                 /// </summary>
-                public OverlapBehavior OverlapBehavior { get; set; }
+                public InputOverlapBehavior OverlapBehavior { get; set; }
 
                 /// <summary>
                 ///     Gets or Sets the <see cref="Microsoft.Xna.Framework.Input.Keys"/> value that represents pushing
@@ -99,7 +99,7 @@ namespace Tiny
                 ///     that represents pushing the <see cref="VirtualJoystick"/>
                 ///     right.
                 /// </param>
-                public Keys(OverlapBehavior behavior,
+                public Keys(InputOverlapBehavior behavior,
                             Microsoft.Xna.Framework.Input.Keys up,
                             Microsoft.Xna.Framework.Input.Keys down,
                             Microsoft.Xna.Framework.Input.Keys left,
@@ -134,13 +134,13 @@ namespace Tiny
                             switch (OverlapBehavior)
                             {
                                 default:
-                                case OverlapBehavior.Cancel:
+                                case InputOverlapBehavior.Cancel:
                                     _value.Y = 0;
                                     break;
-                                case OverlapBehavior.Positive:
+                                case InputOverlapBehavior.Positive:
                                     _value.Y = 1;
                                     break;
-                                case OverlapBehavior.Negative:
+                                case InputOverlapBehavior.Negative:
                                     _value.Y = -1;
                                     break;
                             }
@@ -169,13 +169,13 @@ namespace Tiny
                             switch (OverlapBehavior)
                             {
                                 default:
-                                case OverlapBehavior.Cancel:
+                                case InputOverlapBehavior.Cancel:
                                     _value.X = 0;
                                     break;
-                                case OverlapBehavior.Positive:
+                                case InputOverlapBehavior.Positive:
                                     _value.X = 1;
                                     break;
-                                case OverlapBehavior.Negative:
+                                case InputOverlapBehavior.Negative:
                                     _value.X = -1;
                                     break;
 
