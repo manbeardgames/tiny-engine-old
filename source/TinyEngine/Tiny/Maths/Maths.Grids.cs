@@ -28,37 +28,37 @@ namespace Tiny
     {
         /// <summary>
         ///     Returns a value indictating if the grid cell at the 
-        ///     <paramref name="row"/> and <paramref name="column"/> values provided
+        ///     <paramref name="column"/> and <paramref name="row"/> values provided
         ///     is considered an odd cell.  
         /// </summary>
         /// <remarks>
         ///     A "odd" cell is one where the row and column are both even or where the
         ///     row and column are both odd.
         /// </remarks>
-        /// <param name="row">
-        ///     An <see cref="int"/> value representing the row number of the grid cell.
-        /// </param>
         /// <param name="column">
         ///     An <see cref="int"/> value representing the column number of the grid cell.
+        /// </param>
+        /// <param name="row">
+        ///     An <see cref="int"/> value representing the row number of the grid cell.
         /// </param>
         /// <returns>
         ///     <c>true</c> if the grid cell at the row and column given is odd;
         ///     otherwise, <c>false</c
         /// </returns>
-        public static bool IsOdd(int row, int column)
+        public static bool IsOdd(int column, int row)
         {
             return ((column % 2 == 0 && row % 2 == 0) || (column % 2 != 0 && row % 2 != 0));
         }
 
         /// <summary>
-        ///     Given the <paramref name="row"/> and <paramref name="column"/> number of a
+        ///     Given the <paramref name="column"/> and <paramref name="row"/> number of a
         ///     grid cell, returns the index of the cell within the grid.
         /// </summary>
-        /// <param name="row">
-        ///     An <see cref="int"/> value representing the row number of the grid cell.
-        /// </param>
         /// <param name="column">
         ///     An <see cref="int"/> value representing the column number of the grid cell.
+        /// </param>
+        /// <param name="row">
+        ///     An <see cref="int"/> value representing the row number of the grid cell.
         /// </param>
         /// <param name="totalColumns">
         ///     An <see cref="int"/> value representing the total number of columns in
@@ -68,7 +68,7 @@ namespace Tiny
         ///     An <see cref="int"/> value whos value is the index of the grid cell
         ///     within its grid.
         /// </returns>
-        public static int GetGridIndex(int row, int column, int totalColumns)
+        public static int GetGridIndex(int column, int row, int totalColumns)
         {
             return (row * totalColumns) + column;
         }
@@ -84,15 +84,15 @@ namespace Tiny
         ///     An <see cref="int"/> value representing the total number of columns in
         ///     the grid.
         /// </param>
-        /// <param name="row">
-        ///     When this method returns, contains the row number of the grid cell as
-        ///     an <see cref="int"/> value.
-        /// </param>
         /// <param name="column">
         ///     When this method returns, contains the column number of the grid cell as
         ///     an <see cref="int"/> value.
         /// </param>
-        public static void GetRowAndColumn(int gridindex, int totalColumns, out int row, out int column)
+        /// <param name="row">
+        ///     When this method returns, contains the row number of the grid cell as
+        ///     an <see cref="int"/> value.
+        /// </param>
+        public static void GetColumnAndRow(int gridindex, int totalColumns, out int column, out int row)
         {
             row = gridindex / totalColumns;
             column = gridindex % totalColumns;

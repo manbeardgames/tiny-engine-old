@@ -82,7 +82,7 @@ namespace Tiny
             {
                 for (int column = 0; column < _columns; column++)
                 {
-                    int size = GetSize(Maths.IsOdd(row, column));
+                    int size = GetSize(Maths.IsOdd(column, row));
                     int xPos = ((column * _tileSize) + (_tileSize - size) / 2) + (size / 2);
                     int yPos = ((row * _tileSize) + (_tileSize - size) / 2) + (size / 2);
 
@@ -90,7 +90,7 @@ namespace Tiny
                                      destinationRectangle: new Rectangle(xPos, yPos, size, size),
                                      sourceRectangle: new Rectangle(column * _tileSize, row * _tileSize, _tileSize, _tileSize),
                                      color: Color.White,
-                                     rotation: GetRotation(Maths.IsOdd(row, column)),
+                                     rotation: GetRotation(Maths.IsOdd(column, row)),
                                      origin: new Vector2(_tileSize, _tileSize) * 0.5f,
                                      effects: SpriteEffects.None,
                                      layerDepth: 0.0f);
