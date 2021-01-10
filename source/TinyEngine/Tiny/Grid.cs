@@ -138,6 +138,49 @@ namespace Tiny
         }
 
         /// <summary>
+        ///     Gets or Sets the value of the grid cell at the
+        ///     <paramref name="cell"/> values given.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     A <see cref="ArgumentOutOfRangeException"/> exception will be thrown
+        ///     the <paramref name="cell"/> given is outside the bounds of
+        ///     this grid.
+        /// </exception>
+        /// <exception cref="Exception">
+        ///     A <see cref="Exception"/> exception will be thrown if a value already
+        ///     exists within the grid cell.
+        /// </exception>
+        /// <param name="cell">
+        ///     A <see cref="Point"/> value that whos <see cref="Point.X"/> and <see cref="Point.Y"/>
+        ///     defines the column and row of a grid cell.
+        /// </param>
+        /// <returns>
+        ///     The value of the grid cell as type <see cref="{T}"/>
+        /// </returns>
+        public T this[Point cell]
+        {
+            get
+            {
+                if (!Maths.IsInRange(cell.X, 0, Size.X))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(cell.X), $"The column value given is outside the bounds of this grid. Value given was: {cell.X}.  Expected a value greater than or equal to zero and less than {Size.X}");
+                }
+
+                if (!Maths.IsInRange(cell.Y, 0, Size.Y))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(cell.Y), $"The row value given is outside the bounds of this grid. Value given was: {cell.Y}.  Expected a value greater than or equal to zero and less than {Size.Y}");
+                }
+
+                return _values[cell.Y, cell.X];
+            }
+
+            set
+            {
+                Add(value, cell);
+            }
+        }
+
+        /// <summary>
         ///     Gets a <see cref="Point"/> value whos <see cref="Point.X"/> and
         ///     <see cref="Point.Y"/> define the total count of columns and the
         ///     total count of rows respectivly in this grid.
@@ -149,6 +192,10 @@ namespace Tiny
         ///     grid cells in this grid.
         /// </summary>
         public int CellCount { get; private set; }
+
+        public IReadOnlyList<Point> EmptyCells { get; private set; }
+
+        public IReadOnlyList<Point> FilledCells { get; private set; }
 
         /// <summary>
         ///     Creates a new <see cref="Grid{T}"/> instance.
@@ -179,8 +226,12 @@ namespace Tiny
             Size = new Point(columns, rows);
             _values = new T[rows, columns];
             _emptyValue = emptyValue;
+
             _emptyCells = new List<Point>();
             _filledCells = new List<Point>();
+
+            EmptyCells = _emptyCells.AsReadOnly();
+            FilledCells = _filledCells.AsReadOnly();
 
             Clear();
         }
