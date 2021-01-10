@@ -273,5 +273,33 @@ namespace Tiny
             float snappedAngle = (float)Math.Floor((angle + dividers / 2.0f) / dividers) * dividers;
             return AngleToVector(snappedAngle, 1.0f);
         }
+
+        /// <summary>
+        ///     Gets half the <see cref="Vector2"/> value given.
+        /// </summary>
+        /// <param name="vector">
+        ///     A <see cref="Vector2"/> value to half.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Vector2"/> value that is half the original.
+        /// </returns>
+        public static Vector2 HalfValue(this Vector2 vector)
+        {
+            return vector * 0.5f;
+        }
+
+        /// <summary>
+        ///     Gets half the <see cref="Point"/> value given.
+        /// </summary>
+        /// <param name="point">
+        ///     A <see cref="Point"/> value to half.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Point"/> value that is half the original.
+        /// </returns>
+        public static Point HalfValue(this Point point)
+        {
+            return new Point(point.X / 2, point.Y / 2);
+        }
     }
 }
