@@ -5,6 +5,30 @@ using Microsoft.Xna.Framework;
 namespace Tiny
 {
     /// <summary>
+    ///     Defines values tha describe the action to take when adding a
+    ///     new value to the grid if the grid cell being added to already
+    ///     contains a value.
+    /// </summary>
+    public enum OverwriteBehavior
+    {
+        /// <summary>
+        ///     Describes that adding a value is invalid and an exception should be thrown
+        /// </summary>
+        Invalid,
+
+        /// <summary>
+        ///     Describes that the older value should be used instead of the new value given.
+        /// </summary>
+        TakeOlder,
+
+        /// <summary>
+        ///     Describes that the new value should be used to overwrite the old value.
+        /// </summary>
+        TakeNewer,
+    }
+
+
+    /// <summary>
     ///     Represents a grid of values.
     /// </summary>
     /// <typeparam name="T">
@@ -12,28 +36,7 @@ namespace Tiny
     /// </typeparam>
     public class Grid<T>
     {
-        /// <summary>
-        ///     Defines values tha describe the action to take when adding a
-        ///     new value to the grid if the grid cell being added to already
-        ///     contains a value.
-        /// </summary>
-        public enum OverwriteBehavior
-        {
-            /// <summary>
-            ///     Describes that adding a value is invalid and an exception should be thrown
-            /// </summary>
-            Invalid,
 
-            /// <summary>
-            ///     Describes that the older value should be used instead of the new value given.
-            /// </summary>
-            TakeOlder,
-
-            /// <summary>
-            ///     Describes that the new value should be used to overwrite the old value.
-            /// </summary>
-            TakeNewer,
-        }
 
         //  The values that make up this grid.
         private T[,] _values;
