@@ -405,6 +405,8 @@ namespace Tiny
             if (IsEmpty(cell))
             {
                 _values[cell.Y, cell.X] = value;
+                _filledCells.Add(cell);
+                _emptyCells.Remove(cell);
             }
             else
             {
@@ -415,8 +417,6 @@ namespace Tiny
                 else if (behavior == OverwriteBehavior.TakeNewer)
                 {
                     _values[cell.Y, cell.X] = value;
-                    _filledCells.Add(cell);
-                    _emptyCells.Remove(cell);
                 }
             }
         }
@@ -579,7 +579,7 @@ namespace Tiny
                 throw new ArgumentOutOfRangeException(nameof(row), $"The row value given is outside the bounds of this grid. Value given was: {row}.  Expected a value greater than or equal to zero and less than {Size.Y}");
             }
 
-            return !EqualityComparer<T>.Default.Equals(this[column, row], _emptyValue);
+            return EqualityComparer<T>.Default.Equals(this[column, row], _emptyValue);
         }
     }
 }
