@@ -301,5 +301,41 @@ namespace Tiny
         {
             return new Point(point.X / 2, point.Y / 2);
         }
+
+        /// <summary>
+        ///     Multiples a <see cref="Point"/> value's components by the
+        ///     <paramref name="multiplier"/> value.
+        /// </summary>
+        /// <param name="point">
+        ///     The <see cref="Point"/> value to multiply.
+        /// </param>
+        /// <param name="multiplier">
+        ///     A <see cref="int"/> value to multiply the components by.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Point"/> value contining the multiplication result.
+        /// </returns>
+        public static Point Multiply(this Point point, int multiplier)
+        {
+            return new Point(point.X * multiplier, point.Y * multiplier);
+        }
+
+        /// <summary>
+        ///     Divides a <see cref="Point"/> value's components by the
+        ///     <paramref name="divisor"/> value.
+        /// </summary>
+        /// <param name="point">
+        ///     The <see cref="Point"/> value to multiply.
+        /// </param>
+        /// <param name="divisor">
+        ///     A <see cref="int"/> value to divide the components by.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Point"/> value contining the divsion result.
+        /// </returns>
+        public static Point Divide(this Point point, int divisor)
+        {
+            return new Point(point.X / divisor, point.Y / divisor);
+        }
     }
 }
