@@ -28,6 +28,7 @@ using System.Reflection;
 using System.Runtime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Num = System.Numerics;
 
 namespace Tiny
 {
@@ -264,6 +265,7 @@ namespace Tiny
             base.LoadContent();
             SpriteBatch = new SpriteBatch(Graphics.Device);
             SpriteBatchExtensions.Initialize(Graphics.Device);
+
         }
 
         /// <summary>
@@ -356,7 +358,9 @@ namespace Tiny
                 _activeTransition.Render();
             }
 
+
             //  Prepare the grpahics device for the final render.
+            Graphics.SetViewport();
             Graphics.Clear();
 
             DrawAlways();
@@ -386,9 +390,11 @@ namespace Tiny
 
             //  End the sprite batch
             SpriteBatch.End();
+
         }
 
         protected virtual void DrawAlways() { }
+
 
         /// <summary>
         ///     Changes the current active <see cref="Scene"/> to the one provided.
