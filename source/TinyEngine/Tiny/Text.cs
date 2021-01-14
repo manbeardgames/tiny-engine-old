@@ -82,6 +82,36 @@ namespace Tiny
         }
 
         /// <summary>
+        ///     Gets or Sets a <see cref="float"/> value that describes the
+        ///     y-coordiante position to render this at.
+        /// </summary>
+        public float X
+        {
+            get { return _position.X; }
+            set
+            {
+                _position.X = value;
+                _position.Round();
+                SetBounds();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or Sets a <see cref="float"/> value that describes the
+        ///     x-coordiante position to render this at.
+        /// </summary>
+        public float Y
+        {
+            get { return _position.Y; }
+            set
+            {
+                _position.Y = value;
+                _position.Round();
+                SetBounds();
+            }
+        }
+
+        /// <summary>
         ///     Gets a <see cref="Vector2"/> value that describes the width
         ///     and height, in pixels, of this text when rendered.
         /// </summary>
@@ -325,5 +355,10 @@ namespace Tiny
             SetBounds();
         }
 
+        public void CenterLeftOrigin()
+        {
+            Origin = new Vector2(0, _rawSize.Y) * 0.5f;
+            SetBounds();
+        }
     }
 }
