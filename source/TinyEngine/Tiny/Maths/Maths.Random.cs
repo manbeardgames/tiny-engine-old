@@ -118,5 +118,26 @@ namespace Tiny
         {
             return values[random.Next(values.Length)];
         }
+
+        /// <summary>
+        ///     Given a list of <typeparamref name="T"/> values, chooses one at randome
+        ///     and returns it
+        /// </summary>
+        /// <typeparam name="T">
+        ///     The type of values.
+        /// </typeparam>
+        /// <param name="random">
+        ///     A <see cref="System.Random"/> instance.
+        /// </param>
+        /// <param name="values">
+        ///     The values to choose from.
+        /// </param>
+        /// <returns>
+        ///     A <typeparamref name="T"/> value randomly choosen from the list of values given.
+        /// </returns>
+        public static T Next<T>(this Random random, List<T> values)
+        {
+            return values[random.Next(values.Count)];
+        }
     }
 }
