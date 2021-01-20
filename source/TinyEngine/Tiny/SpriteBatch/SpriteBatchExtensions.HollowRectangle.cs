@@ -164,6 +164,7 @@ namespace Tiny
             Vector2 bottomRight = topRight + (Vector2.UnitY * size);
             Vector2 bottomLeft = bottomRight - (Vector2.UnitX * size);
 
+
             spriteBatch.DrawLine(topLeft, topRight, color);
             spriteBatch.DrawLine(topRight, bottomRight, color);
             spriteBatch.DrawLine(bottomRight, bottomLeft, color);

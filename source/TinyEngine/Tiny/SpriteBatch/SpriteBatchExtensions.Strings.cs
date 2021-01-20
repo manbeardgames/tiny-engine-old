@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,6 +7,9 @@ namespace Tiny
 {
     public static partial class SpriteBatchExtensions
     {
+        private const char NEWLINE_CHAR = '\n';
+        private const char CARRIAGERETURN_CHAR = '\r';
+
         /// <summary>
         ///     Draws a <see cref="Text"/> instance to the screen.
         /// </summary>
@@ -31,11 +35,94 @@ namespace Tiny
         /// </param>
         public static void DrawString(this SpriteBatch spriteBatch, TextBuilder text)
         {
-            for(int i = 0; i < text.Text.Count; i++)
+            for (int i = 0; i < text.Text.Count; i++)
             {
                 spriteBatch.DrawString(text.Text[i]);
             }
         }
+
+        public static void DrawString(this SpriteBatch spriteBatch, BMFont font, string text, Vector2 position, Color color)
+        {
+            List<BMFontGlyph> glyphs = font.GetGlyphs(text, position);
+
+            for (int i = 0; i < glyphs.Count; i++)
+            {
+                BMFontGlyph glyph = glyphs[i];
+                spriteBatch.Draw(texture: glyph.Texture,
+                                 position: glyph.Position,
+                                 sourceRectangle: glyph.SourceRectangle,
+                                 color: Color.White);
+            }
+        }
+
+        public static void DrawString(this SpriteBatch spriteBatch, BMFont font, string text, Vector2 position, Color color, Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth)
+        {
+            List<BMFontGlyph> glyphs = font.GetGlyphs(text, position, scale);
+
+            for (int i = 0; i < glyphs.Count; i++)
+            {
+                BMFontGlyph glyph = glyphs[i];
+
+                spriteBatch.Draw(texture: glyph.Texture,
+                                position: glyph.Position - origin,
+                                sourceRectangle: glyph.SourceRectangle,
+                                color: color,
+                                rotation: 0.0f,
+                                origin: Vector2.Zero,
+                                scale: scale,
+                                effects: effect,
+                                layerDepth: layerDepth);
+            }
+        }
+
+        public static void DrawString(this SpriteBatch spriteBatch, PixelFontSize font, string text, Vector2 position, Color color, Vector2 origin, Vector2 scale, float layerDepth)
+        {
+            //  If the string is empty, just return early
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            Vector2 offset = Vector2.Zero;
+
+            for (int c = 0; c < text.Length; c++)
+            {
+                //  Handle newline/carriage return
+                if (text[c] == '\n' || text[c] == '\r')
+                {
+                    offset.X = 0;
+                    offset.Y += font.LineHeight;
+                    continue;
+                }
+
+                if (font.TryGetCharacter(text[c], out PixelFontCharacter character))
+                {
+                    Vector2 renderPosition = position + (offset + character.Offset) * scale;
+                    renderPosition -= origin;
+
+                    renderPosition.Round();
+
+                    spriteBatch.Draw(texture: character.Texture,
+                                     position: renderPosition,
+                                     sourceRectangle: character.SourceRectangle,
+                                     color: color,
+                                     rotation: 0.0f,
+                                     origin: Vector2.Zero,
+                                     scale: scale,
+                                     effects: SpriteEffects.None,
+                                     layerDepth: layerDepth);
+
+                    offset.X += character.XAdvance;
+
+                    if (c < text.Length - 1 && character.TryGetKerning(text[c + 1], out int kerning))
+                    {
+                        offset.X += kerning;
+                    }
+                }
+
+            }
+        }
+
 
         /// <summary>
         ///     Draws a <see cref="string"/> value with an outline applied to it.
@@ -403,5 +490,6 @@ namespace Tiny
 
             spriteBatch.DrawString(spriteFont, text, position, fontColor, rotation, origin, scale, effects, layerDepth);
         }
+
     }
 }
