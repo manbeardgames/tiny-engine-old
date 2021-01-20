@@ -32,9 +32,6 @@ namespace Tiny
         /// <summary>
         ///     Updates the <see cref="VirtualNode"/> instance.
         /// </summary>
-        /// <param name="time">
-        ///     Timeing values provided by TinyEngine.
-        /// </param>
-        public virtual void Update(Time time) { }
+        public virtual void Update() { }
     }
 }

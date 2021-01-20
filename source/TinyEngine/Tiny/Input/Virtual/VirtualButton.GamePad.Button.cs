@@ -60,7 +60,6 @@ namespace Tiny
                 /// </summary>
                 public override bool Released => Input.GamePads[_index].ButtonReleased(_button);
 
-
                 /// <summary>
                 ///     Creates a new <see cref="Button"/> instance.
                 /// </summary>

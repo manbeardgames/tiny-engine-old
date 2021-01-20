@@ -35,9 +35,6 @@ namespace Tiny
     /// </summary>
     public abstract class SceneTransition : IDisposable
     {
-        //  A cached refernece to the TinyEngine instance.
-        private Engine _engine;
-
         /// <summary>
         ///     Gets a <see cref="bool"/> value indicating if this instance has
         ///     been properly disposed of.
@@ -72,31 +69,19 @@ namespace Tiny
         ///     Gets the <see cref="RenderTarget2D"/> instance of the scene that will
         ///     be used for the transition.
         /// </summary>
-        public RenderTarget2D SceneTexture { get; private set; }
+        public TinyRenderTarget SceneTexture { get; private set; }
 
         /// <summary>
         ///     Gets the <see cref="RenderTarget2D"/> instance that this transition
         ///     will be rendered to.
         /// </summary>
-        public RenderTarget2D RenderTarget { get; private set; }
+        public TinyRenderTarget RenderTarget { get; private set; }
 
         /// <summary>
         ///     Gets the <see cref="Microsoft.Xna.Framework.Graphics.SpriteBatch"/>
         ///     instance used for rendering.
         /// </summary>
-        public SpriteBatch SpriteBatch => _engine.SpriteBatch;
-
-        /// <summary>
-        ///     Gets the <see cref="Tiny.Graphics"/> instance used to manage and
-        ///     present the graphics.
-        /// </summary>
-        public Graphics Graphics => _engine.Graphics;
-
-        /// <summary>
-        ///     Gets the <see cref="Tiny.Time"/> instance which provides the
-        ///     timing values for each update frame.
-        /// </summary>
-        public Time Time => _engine.Time;
+        public SpriteBatch SpriteBatch => Engine.Instance.SpriteBatch;
 
         /// <summary>
         ///     An <see cref="event"/> that will be triggered when this transition
@@ -107,18 +92,19 @@ namespace Tiny
         /// <summary>
         ///     Creates a new <see cref="SceneTransition"/> instance.
         /// </summary>
-        /// <param name="engine">
-        ///     A reference to the <see cref="Engine"/> instance.
-        /// </param>
         /// <param name="transitionTime">
         ///     A <see cref="TimeSpan"/> value that represents the total amount of
         ///     time this transition should take to complete.
         /// </param>
-        public SceneTransition(Engine engine, TimeSpan transitionTime)
+        public SceneTransition(TimeSpan transitionTime)
         {
-            _engine = engine;
             TransitionTimeRemaining = TransitionTime = transitionTime;
-            GenerateRenderTarget();
+
+            RenderTarget = new TinyRenderTarget(width: Engine.Resolution.X,
+                                                height: Engine.Resolution.Y,
+                                                multiSampleCount: 0,
+                                                depth: true,
+                                                preserve: true);
         }
 
         /// <summary>
@@ -135,7 +121,7 @@ namespace Tiny
         ///     A reference to the <see cref="RenderTarget2D"/> instance that the scene being
         ///     transitioned is rendered to.
         /// </param>
-        public virtual void Start(RenderTarget2D sceneTexture)
+        public virtual void Start(TinyRenderTarget sceneTexture)
         {
             SceneTexture = sceneTexture;
             IsTransitioning = true;
@@ -153,7 +139,7 @@ namespace Tiny
         /// </remarks>
         public virtual void Update()
         {
-            TransitionTimeRemaining -= Time.ElapsedGameTime;
+            TransitionTimeRemaining -= Engine.Time.ElapsedGameTime;
 
             if (TransitionTimeRemaining <= TimeSpan.Zero)
             {
@@ -189,9 +175,9 @@ namespace Tiny
         protected virtual void BeginDraw()
         {
             //  Prepare the graphics device
-            Graphics.SetRenderTarget(RenderTarget);
-            Graphics.SetViewport(new Viewport(RenderTarget.Bounds));
-            Graphics.Clear();
+            Engine.Instance.GraphicsDevice.SetRenderTarget(RenderTarget);
+            Engine.Instance.GraphicsDevice.Viewport = new Viewport(RenderTarget.Bounds);
+            Engine.Instance.GraphicsDevice.Clear(Engine.ClearColor);
 
             SpriteBatch.Begin(blendState: BlendState.AlphaBlend,
                               samplerState: SamplerState.PointClamp);
@@ -223,7 +209,7 @@ namespace Tiny
         protected virtual void EndDraw()
         {
             SpriteBatch.End();
-            Graphics.Device.SetRenderTarget(null);
+            Engine.Instance.GraphicsDevice.SetRenderTarget(null);
         }
 
         /// <summary>
@@ -232,7 +218,7 @@ namespace Tiny
         /// </summary>
         public virtual void HandleGraphicsDeviceCreated()
         {
-            GenerateRenderTarget();
+            RenderTarget.Reload();
         }
 
         /// <summary>
@@ -241,7 +227,7 @@ namespace Tiny
         /// </summary>
         public virtual void HandleGraphicsDeviceReset()
         {
-            GenerateRenderTarget();
+            RenderTarget.Reload();
         }
 
         /// <summary>
@@ -249,37 +235,6 @@ namespace Tiny
         ///     event is triggered.
         /// </summary>
         public virtual void HandleClientSizeChanged() { }
-
-        /// <summary>
-        ///     Generates the <see cref="RenderTarget"/> instance that this transition
-        ///     draws to.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         The <see cref="RenderTarget2D"/> instance that is generated uses the
-        ///         default values for TinyEngine. If needed, override this method to create a render
-        ///         target that is sutible for the transition being created.
-        ///     </para>
-        /// </remarks>
-        protected virtual void GenerateRenderTarget()
-        {
-            //  If the RenderTarget instance has already been created previously but has
-            //  yet to be disposed of properly, dispose of the instance before setting
-            //  a new one.
-            if (RenderTarget != null && !RenderTarget.IsDisposed)
-            {
-                RenderTarget.Dispose();
-            }
-
-            RenderTarget = new RenderTarget2D(graphicsDevice: Graphics.Device,
-                                              width: Graphics.Resolution.X,
-                                              height: Graphics.Resolution.Y,
-                                              mipMap: false,
-                                              preferredFormat: SurfaceFormat.Color,
-                                              preferredDepthFormat: DepthFormat.Depth24Stencil8,
-                                              preferredMultiSampleCount: 0,
-                                              usage: RenderTargetUsage.DiscardContents);
-        }
 
         /// <summary>
         ///     Handles properly disposing of this instance.
@@ -313,9 +268,6 @@ namespace Tiny
                     RenderTarget.Dispose();
                     RenderTarget = null;
                 }
-
-                //  Remove the reference to TinyEngine
-                _engine = null;
             }
 
             IsDisposed = true;

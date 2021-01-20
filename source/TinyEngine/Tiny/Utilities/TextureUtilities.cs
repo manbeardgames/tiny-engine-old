@@ -5,9 +5,9 @@ namespace Tiny
 {
     public static class TextureUtilities
     {
-        public static Texture2D FromFile(GraphicsDevice device, string path, bool preMultiplyAlpha = true)
+        public static Texture2D FromFile(string path, bool preMultiplyAlpha = true)
         {
-            Texture2D texture = Texture2D.FromFile(device, path);
+            Texture2D texture = Texture2D.FromFile(Engine.Instance.GraphicsDevice, path);
 
             if (preMultiplyAlpha)
             {

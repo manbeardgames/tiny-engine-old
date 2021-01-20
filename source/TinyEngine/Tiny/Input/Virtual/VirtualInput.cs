@@ -36,6 +36,6 @@ namespace Tiny
             Input.VirtualInputs.Remove(this);
         }
 
-        public virtual void Update(Time time) { }
+        public virtual void Update() { }
     }
 }

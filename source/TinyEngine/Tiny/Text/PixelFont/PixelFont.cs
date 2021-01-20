@@ -18,14 +18,14 @@ namespace Tiny
             _sizes = new List<PixelFontSize>();
         }
 
-        public PixelFontSize AddFontSize(GraphicsDevice device, string path)
+        public PixelFontSize AddFontSize(string path)
         {
             XmlDocument xml = Xml.LoadXmlDocument(path);
             XmlElement fontElement = xml["font"];
-            return AddFontSize(device, path, fontElement);
+            return AddFontSize(path, fontElement);
         }
 
-        public PixelFontSize AddFontSize(GraphicsDevice device, string path, XmlElement fontElement)
+        public PixelFontSize AddFontSize(string path, XmlElement fontElement)
         {
             //  Get the size of the font
             float size = fontElement["info"].GetIntAttribute("size");
@@ -57,7 +57,7 @@ namespace Tiny
                 //  Load and add the texture to the list of textures
                 //  Stupid texture loading from file doesn't premultiply alpha, stupid
                 //  premultiply alpha...uuuuggghhhh
-                pages.Add(TextureUtilities.FromFile(device, pagePath, preMultiplyAlpha: true));
+                pages.Add(TextureUtilities.FromFile(pagePath, preMultiplyAlpha: true));
                 //pages.Add(Texture2D.FromFile(device, pagePath));
             }
 

@@ -25,7 +25,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace Tiny
 {
@@ -34,35 +33,35 @@ namespace Tiny
     /// </summary>
     public abstract class Scene
     {
-        //  A cached refernce to the TInyEngine instance.
-        protected Engine _engine;
+        ////  A cached refernce to the TInyEngine instance.
+        //protected Engine _engine;
 
-        //  Used to load scene specific content.
-        protected ContentManager _content;
+        ////  Used to load scene specific content.
+        //protected ContentManager _content;
 
         /// <summary>
-        ///     Gets the <see cref="RenderTarget2D"/> instance that the scene
+        ///     Gets the <see cref="TinyRenderTarget"/> instance that the scene
         ///     renders to.
         /// </summary>
-        public RenderTarget2D RenderTarget { get; protected set; }
+        public TinyRenderTarget RenderTarget { get; protected set; }
 
         /// <summary>
         ///     Gets the <see cref="Microsoft.Xna.Framework.Graphics.SpriteBatch"/>
         ///     instance used for rendering.
         /// </summary>
-        public SpriteBatch SpriteBatch => _engine.SpriteBatch;
+        public SpriteBatch SpriteBatch => Engine.Instance.SpriteBatch;
 
-        /// <summary>
-        ///     Gets the <see cref="Tiny.Graphics"/> instance used to manage and
-        ///     present the graphics.
-        /// </summary>
-        public Graphics Graphics => _engine.Graphics;
+        ///// <summary>
+        /////     Gets the <see cref="Tiny.Graphics"/> instance used to manage and
+        /////     present the graphics.
+        ///// </summary>
+        //public Graphics Graphics => _engine.Graphics;
 
-        /// <summary>
-        ///     Gets the <see cref="Tiny.Time"/> instance which provides the
-        ///     timing values for each update frame.
-        /// </summary>
-        public Time Time => _engine.Time;
+        ///// <summary>
+        /////     Gets the <see cref="Tiny.Time"/> instance which provides the
+        /////     timing values for each update frame.
+        ///// </summary>
+        //public Time Time => _engine.Time;
 
         /// <summary>
         ///     Gets or Sets a <see cref="bool"/> value indicating if this
@@ -77,7 +76,7 @@ namespace Tiny
         ///     Gets the <see cref="ContentManager"/> instance used to load global
         ///     content.
         /// </summary>
-        public ContentManager GlobalContent => _engine.Content;
+        public ContentManager GlobalContent => Engine.Instance.Content;
 
         /// <summary>
         ///     Gets the <see cref="ContentManager"/> instance used to load content
@@ -87,7 +86,7 @@ namespace Tiny
         ///     Any content loaded through this <see cref="ContentManager"/> will
         ///     be unloaded when switch from this scene to another scene.s
         /// </remarks>
-        public ContentManager Content => _content;
+        public ContentManager Content { get; private set; }
 
         /// <summary>
         ///     Creates a new <see cref="Scene"/> instance.
@@ -96,14 +95,8 @@ namespace Tiny
         ///     A refernce to the <see cref="Game"/> instance that is derived
         ///     from <see cref="Engine"/>.
         /// </param>
-        public Scene(Engine engine)
+        public Scene()
         {
-            if (engine == null)
-            {
-                throw new ArgumentNullException(nameof(engine));
-            }
-
-            _engine = engine;
             Paused = true;
         }
 
@@ -113,7 +106,6 @@ namespace Tiny
         /// </summary>
         internal void Begin()
         {
-            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}]: Scene Begin");
             Paused = false;
             Start();
         }
@@ -143,8 +135,8 @@ namespace Tiny
         /// 
         public virtual void Initialize()
         {
-            _content = new ContentManager(_engine.Services);
-            _content.RootDirectory = _engine.Content.RootDirectory;
+            Content = new ContentManager(Engine.Instance.Services);
+            Content.RootDirectory = Engine.Instance.Content.RootDirectory;
             LoadContent();
         }
 
@@ -154,7 +146,7 @@ namespace Tiny
         /// <remarks>
         ///     <para>
         ///         When overriding this method, ensure that <c>base.LoadContent()</c> is still called.
-        ///         This is to allow the <see cref="RenderTarget"/> value to instantiate.
+        ///         This is to allow the <see cref="TinyRenderTarget"/> value to instantiate.
         ///     </para>
         ///     <para>
         ///         This is called only once, immediately at the end of the 
@@ -163,7 +155,11 @@ namespace Tiny
         /// </remarks>
         public virtual void LoadContent()
         {
-            GenerateRenderTarget();
+            RenderTarget = new TinyRenderTarget(width: Engine.Resolution.X,
+                                                height: Engine.Resolution.Y,
+                                                multiSampleCount: 0,
+                                                depth: true,
+                                                preserve: true);
         }
 
         /// <summary>
@@ -181,8 +177,8 @@ namespace Tiny
         /// </remarks>
         public virtual void UnloadContent()
         {
-            _content.Unload();
-            _content = null;
+            Content.Unload();
+            Content = null;
 
             //  Dispose of the render target if it is not already dispoed
             if (RenderTarget != null && !RenderTarget.IsDisposed)
@@ -190,9 +186,6 @@ namespace Tiny
                 RenderTarget.Dispose();
                 RenderTarget = null;
             }
-
-            //  Remove the refeerence to the engine
-            _engine = null;
         }
 
         /// <summary>
@@ -226,7 +219,7 @@ namespace Tiny
         /// </returns>
         public T GameAs<T>() where T : Game
         {
-            if (_engine is T game)
+            if (Engine.Instance is T game)
             {
                 return game;
             }
@@ -244,7 +237,7 @@ namespace Tiny
         /// </param>
         public void ChangeScene(Scene to)
         {
-            _engine.ChangeScene(to);
+            Engine.Instance.ChangeScene(to);
         }
 
         /// <summary>
@@ -265,31 +258,8 @@ namespace Tiny
         /// </param>
         public void ChangeScene(Scene to, SceneTransition transitionOut, SceneTransition transitionIn)
         {
-            _engine.ChangeScene(to, transitionOut, transitionIn);
+            Engine.Instance.ChangeScene(to, transitionOut, transitionIn);
         }
-
-        /// <summary>
-        ///     Generates the <see cref="RenderTarget"/> isntance for this scene.
-        /// </summary>
-        protected virtual void GenerateRenderTarget()
-        {
-            //  If the RenderTarget instance has already been created previously, but has yet
-            //  to be disposed of properly, dispose of the instance before setting a new one.
-            if (RenderTarget != null && !RenderTarget.IsDisposed)
-            {
-                RenderTarget.Dispose();
-            }
-
-            RenderTarget = new RenderTarget2D(graphicsDevice: _engine.Graphics.Device,
-                                              width: _engine.Graphics.Resolution.X,
-                                              height: _engine.Graphics.Resolution.Y,
-                                              mipMap: false,
-                                              preferredFormat: SurfaceFormat.Color,
-                                              preferredDepthFormat: DepthFormat.Depth24Stencil8,
-                                              preferredMultiSampleCount: 0,
-                                              usage: RenderTargetUsage.DiscardContents);
-        }
-
 
         /// <summary>
         ///     Handles the <see cref="GraphicsDeviceManager.DeviceCreated"/> event for the
@@ -297,7 +267,7 @@ namespace Tiny
         /// </summary>
         public virtual void HandleGraphicsDeviceCreated()
         {
-            GenerateRenderTarget();
+            RenderTarget.Reload();
         }
 
         /// <summary>
@@ -306,7 +276,7 @@ namespace Tiny
         /// </summary>
         public virtual void HandleGraphicsDeviceReset()
         {
-            GenerateRenderTarget();
+            RenderTarget.Reload();
         }
 
         /// <summary>

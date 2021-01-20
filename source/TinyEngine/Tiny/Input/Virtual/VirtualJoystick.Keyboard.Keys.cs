@@ -115,10 +115,7 @@ namespace Tiny
                 /// <summary>
                 ///     Updates the value of this <see cref="Buttons"/> instance.
                 /// </summary>
-                /// <param name="time">
-                ///     Timing values provided by the TinyEngine.
-                /// </param>
-                public override void Update(Time time)
+                public override void Update()
                 {
                     bool isUp = Input.Keyboard.KeyCheck(Up);
                     bool isDown = Input.Keyboard.KeyCheck(Down);

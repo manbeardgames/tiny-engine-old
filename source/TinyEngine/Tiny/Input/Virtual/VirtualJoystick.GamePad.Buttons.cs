@@ -163,10 +163,7 @@ namespace Tiny
                 /// <summary>
                 ///     Updates the value of this <see cref="Buttons"/> instance.
                 /// </summary>
-                /// <param name="time">
-                ///     Timing values provided by the TinyEngine.
-                /// </param>
-                public override void Update(Time time)
+                public override void Update()
                 {
                     bool isUp = Input.GamePads[_index].ButtonCheck(Up);
                     bool isDown = Input.GamePads[_index].ButtonCheck(Down);

@@ -12,24 +12,16 @@ namespace Tiny
         ///     Creates a new <see cref="FadeTransition"/> instance with with
         ///     a default time of 1 second.
         /// </summary>
-        /// <param name="engine">
-        ///     A reference to the <see cref="Engine"/> instance.
-        /// </param>
-        public FadeTransition(Engine engine)
-            : this(engine, TimeSpan.FromSeconds(1)) { }
+        public FadeTransition() : this(TimeSpan.FromSeconds(1)) { }
 
         /// <summary>
         ///     Creates a new <see cref="FadeTransition"/> instance.
         /// </summary>
-        /// <param name="engine">
-        ///     A reference to the <see cref="Engine"/> instance.
-        /// </param>
         /// <param name="transitionTime">
         ///     A <see cref="TimeSpan"/> value that represents the total amount of
         ///     time this transition should take to complete.
         /// </param>
-        public FadeTransition(Engine engine, TimeSpan transitionTime)
-            : base(engine, transitionTime) { }
+        public FadeTransition(TimeSpan transitionTime) : base(transitionTime) { }
 
         /// <summary>
         ///     Draws this transition.
@@ -37,9 +29,9 @@ namespace Tiny
         protected override void Draw()
         {
             SpriteBatch.Draw(texture: SceneTexture,
-                                destinationRectangle: SceneTexture.Bounds,
-                                sourceRectangle: SceneTexture.Bounds,
-                                color: Color.White * GetAlpha());
+                             destinationRectangle: SceneTexture.Bounds,
+                             sourceRectangle: SceneTexture.Bounds,
+                             color: Color.White * GetAlpha());
         }
 
         /// <summary>

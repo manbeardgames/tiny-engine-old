@@ -39,10 +39,10 @@ namespace Tiny
         public static bool IsDisposed { get; private set; }
 
         /// <summary>
-        ///     Gets a <see cref="Texture2D"/> instnace containing a 1x1 white
+        ///     Gets a <see cref="TinyTexture"/> instance containing a 1x1 white
         ///     pixel texture used for rendering primatives.
         /// </summary>
-        public static Texture2D Pixel { get; private set; }
+        public static TinyTexture Pixel { get; private set; }
 
         /// <summary>
         ///     Initializes the <see cref="SpriteBatchExtensions"/> for use.
@@ -53,8 +53,7 @@ namespace Tiny
         /// </param>
         public static void Initialize(GraphicsDevice device)
         {
-            Pixel = new Texture2D(device, 1, 1);
-            Pixel.SetData<Color>(new Color[] { Color.White });
+            Pixel = new TinyTexture(1, 1, Color.White);
         }
 
         /// <summary>

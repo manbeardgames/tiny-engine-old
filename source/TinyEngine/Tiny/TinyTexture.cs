@@ -99,9 +99,9 @@ namespace Tiny
         ///     A <see cref="Color"/> value that describes the color to set
         ///     each pixel to.
         /// </param>
-        public TinyTexture(GraphicsDevice device, int width, int height, Color color)
+        public TinyTexture(int width, int height, Color color)
         {
-            Texture = new Texture2D(device, width, height);
+            Texture = new Texture2D(Engine.Instance.GraphicsDevice, width, height);
 
             Color[] buffer = new Color[width * height];
             for (int i = 0; i < buffer.Length; i++)

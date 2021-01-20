@@ -237,9 +237,9 @@ namespace Tiny
         /// </param>
         public static void DrawLineAngle(this SpriteBatch spriteBatch, Vector2 start, float angle, float length, Color color, float thickness)
         {
-            spriteBatch.Draw(texture: Pixel,
+            spriteBatch.Draw(texture: Pixel.Texture,
                              position: start,
-                             sourceRectangle: new Rectangle(0, 0, Pixel.Width, Pixel.Height),
+                             sourceRectangle: Pixel.SourceRectangle,
                              color: color,
                              rotation: angle,
                              origin: thickness > 1.0f ? new Vector2(0.0f, 0.5f) : Vector2.Zero,

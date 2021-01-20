@@ -41,40 +41,6 @@ namespace Tiny
             }
         }
 
-        public static void DrawString(this SpriteBatch spriteBatch, BMFont font, string text, Vector2 position, Color color)
-        {
-            List<BMFontGlyph> glyphs = font.GetGlyphs(text, position);
-
-            for (int i = 0; i < glyphs.Count; i++)
-            {
-                BMFontGlyph glyph = glyphs[i];
-                spriteBatch.Draw(texture: glyph.Texture,
-                                 position: glyph.Position,
-                                 sourceRectangle: glyph.SourceRectangle,
-                                 color: Color.White);
-            }
-        }
-
-        public static void DrawString(this SpriteBatch spriteBatch, BMFont font, string text, Vector2 position, Color color, Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth)
-        {
-            List<BMFontGlyph> glyphs = font.GetGlyphs(text, position, scale);
-
-            for (int i = 0; i < glyphs.Count; i++)
-            {
-                BMFontGlyph glyph = glyphs[i];
-
-                spriteBatch.Draw(texture: glyph.Texture,
-                                position: glyph.Position - origin,
-                                sourceRectangle: glyph.SourceRectangle,
-                                color: color,
-                                rotation: 0.0f,
-                                origin: Vector2.Zero,
-                                scale: scale,
-                                effects: effect,
-                                layerDepth: layerDepth);
-            }
-        }
-
         public static void DrawString(this SpriteBatch spriteBatch, PixelFontSize font, string text, Vector2 position, Color color, Vector2 origin, Vector2 scale, float layerDepth)
         {
             //  If the string is empty, just return early

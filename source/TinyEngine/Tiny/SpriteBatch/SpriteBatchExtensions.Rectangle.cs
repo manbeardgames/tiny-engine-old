@@ -62,9 +62,9 @@ namespace Tiny
         /// </param>
         public static void DrawRectangle(this SpriteBatch spriteBatch, Rectangle rectangle, Color color)
         {
-            spriteBatch.Draw(texture: Pixel,
+            spriteBatch.Draw(texture: Pixel.Texture,
                              destinationRectangle: rectangle,
-                             sourceRectangle: new Rectangle(0, 0, Pixel.Width, Pixel.Height),
+                             sourceRectangle: Pixel.SourceRectangle,
                              color: color);
         }
 
@@ -163,9 +163,9 @@ namespace Tiny
         /// </param>
         public static void DrawRectangle(this SpriteBatch spriteBatch, Vector2 topLeft, Vector2 size, Color color)
         {
-            spriteBatch.Draw(texture: Pixel,
+            spriteBatch.Draw(texture: Pixel.Texture,
                              position: topLeft,
-                             sourceRectangle: new Rectangle(0, 0, Pixel.Width, Pixel.Height),
+                             sourceRectangle: Pixel.SourceRectangle,
                              color: color,
                              rotation: 0.0f,
                              origin: Vector2.Zero,

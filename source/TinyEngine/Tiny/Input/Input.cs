@@ -69,19 +69,19 @@ namespace Tiny
         /// <summary>
         ///     Updates the input manager.
         /// </summary>
-        public static void Update(Time time)
+        public static void Update()
         {
             Keyboard.Update();
             Mouse.Update();
 
             for (int i = 0; i < 4; i++)
             {
-                GamePads[i].Update(time);
+                GamePads[i].Update();
             }
 
             for (int i = 0; i < VirtualInputs.Count; i++)
             {
-                VirtualInputs[i].Update(time);
+                VirtualInputs[i].Update();
             }
         }
     }

@@ -224,7 +224,7 @@ namespace Tiny
         /// <summary>
         ///     Updates the values for this instance.
         /// </summary>
-        public void Update(Time time)
+        public void Update()
         {
             //  Cache the gamepad states
             PreviousState = CurrentState;
@@ -235,7 +235,7 @@ namespace Tiny
             //  then set the left vibrate to 0.
             if (_leftVibrateTimeRemaining > TimeSpan.Zero)
             {
-                _leftVibrateTimeRemaining -= time.ElapsedGameTime;
+                _leftVibrateTimeRemaining -= Engine.Time.ElapsedGameTime;
                 if (_leftVibrateTimeRemaining <= TimeSpan.Zero)
                 {
                     VibrateLeft(0, TimeSpan.Zero);
@@ -247,7 +247,7 @@ namespace Tiny
             //  then set the right vibrate to 0.
             if (_rightVibrateTimeRemaining > TimeSpan.Zero)
             {
-                _rightVibrateTimeRemaining -= time.ElapsedGameTime;
+                _rightVibrateTimeRemaining -= Engine.Time.ElapsedGameTime;
                 if (_rightVibrateTimeRemaining <= TimeSpan.Zero)
                 {
                     VibrateRight(0, TimeSpan.Zero);

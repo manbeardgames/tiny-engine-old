@@ -28,7 +28,6 @@ using System.Reflection;
 using System.Runtime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Num = System.Numerics;
 
 namespace Tiny
 {
@@ -37,11 +36,127 @@ namespace Tiny
         //  Fully-qualified path to the entry assembly.
         private readonly string _assemblyDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
+        public static Engine Instance { get; private set; }
+
 #if DEBUG
         //  An FPS counter used to get the FPS of the game during a draw call.
         private readonly FPS _fps;
 #endif
 
+        // --------------------------------------------------------------------
+        //
+        //  Graphics
+        //  
+        // --------------------------------------------------------------------
+        #region Graphics
+        //  The amount of padding to apply to the outside of the viewport.
+        private static int _viewPadding;
+
+        //  Indicates if the client (window) is currently resizing.
+        private static bool _isResizing;
+
+        //  The size of the backbuffer resolution.
+        private static Point _resolution;
+
+        //  The size of the virtual rendering resolution.
+        private static Point _vResolution;
+
+        //  The number of pixels that make up one graphics unit.
+        private static int _pixelsPerUnit;
+
+        /// <summary>
+        ///     Gets the <see cref="GraphicsDeviceManager"/> instance used to control
+        ///     the presentation of grpahics.
+        /// </summary>
+        public static GraphicsDeviceManager Graphics { get; private set; }
+
+        /// <summary>
+        ///     Gets a <see cref="Point"/> value that describes the width and
+        ///     height, in pixels, of the rendering resolution of the back buffer.
+        /// </summary>
+        public static Point Resolution => _resolution;
+
+        /// <summary>
+        ///     Gets a <see cref="Point"/> value that desctives the width and
+        ///     height, in pixels, of the virtual rendering resolution.
+        /// </summary>
+        public static Point VirtualResolution => _vResolution;
+
+        /// <summary>
+        ///     Gets or Sets an <see cref="int"/> vlaue that describes the amount
+        ///     of padding, in pixels, to apply to the border of the viewport.
+        /// </summary>
+        public static int ViewPadding
+        {
+            get { return _viewPadding; }
+            set
+            {
+                if (_viewPadding == value) { return; }
+                _viewPadding = value;
+                UpdateView();
+            }
+        }
+
+        /// <summary>
+        ///     Gets a <see cref="Microsoft.Xna.Framework.Graphics.Viewport"/> value
+        ///     that describes the bounds to use when rendering to the game window.
+        /// </summary>
+        public static Viewport Viewport { get; private set; }
+
+        /// <summary>
+        ///     Gets a <see cref="Matrix"/> value that describes the scale to use
+        ///     when rendering graphics to the game window.
+        /// </summary>
+        /// <remarks>
+        ///     This value should be set as the <c>transformationMatrix</c> parameter
+        ///     of the <see cref="SpriteBatch"/> when calling <c>SpriteBatch.Begin()</c>
+        ///     when rendering to the game window.
+        /// </remarks>
+        public static Matrix ScreenMatrix { get; private set; }
+
+        /// <summary>
+        ///     Gets or Sets a <see cref="Color"/> value to use by default when clearing
+        ///     the back buffer.
+        /// </summary>
+        public static Color ClearColor { get; set; }
+
+        /// <summary>
+        ///     Gets or Sets a <see cref="int"/> value that describes the number of pixels
+        ///     that equal one graphical unit.
+        /// </summary>
+        public static int PixelPerUnit
+        {
+            get { return _pixelsPerUnit; }
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), "Pixels per unit must be greater than 0");
+                }
+
+                _pixelsPerUnit = value;
+                TileCount = new Point
+                {
+                    X = Resolution.X / value,
+                    Y = Resolution.Y / value
+                };
+            }
+        }
+
+        /// <summary>
+        ///     Gets a <see cref="Point"/> value that describes the total number of
+        ///     tiles that can fit within the bounds of the <see cref="Resolution"/>
+        ///     on the x and y axes, based on the <see cref="PixelPerUnit"/> value.
+        /// </summary>
+        public static Point TileCount { get; private set; }
+        #endregion Graphics
+
+
+        // --------------------------------------------------------------------
+        //
+        //  Scenes
+        //  
+        // --------------------------------------------------------------------
         //  The current active scene.
         private Scene _activeScene;
 
@@ -68,17 +183,17 @@ namespace Tiny
         ///// </summary>
         //public SceneManager Scene { get; private set; }
 
-        /// <summary>
-        ///     Gets the <see cref="Tiny.Graphics"/> instance used to control and maange the
-        ///     presentation of graphics for the game.
-        /// </summary>
-        public Graphics Graphics { get; protected set; }
+        ///// <summary>
+        /////     Gets the <see cref="Tiny.Graphics"/> instance used to control and maange the
+        /////     presentation of graphics for the game.
+        ///// </summary>
+        //public Graphics Graphics { get; protected set; }
 
         /// <summary>
         ///     Gets a <see cref="Time"/> instance containing the timing values
         ///     for the game.
         /// </summary>
-        public Time Time { get; protected set; }
+        public static Time Time { get; protected set; }
 
         /// <summary>
         ///     Gets a <see cref="string"/> value contining the fully-qualified path to the
@@ -113,15 +228,31 @@ namespace Tiny
         /// </param>
         public Engine(string title, GraphicsOptions graphicsOptions)
         {
+            Instance = this;
             Title = title;
 
             //  Instantiate the graphics.
-            Graphics = new Graphics(this, graphicsOptions);
+            //Graphics = new Graphics(this, graphicsOptions);
+            ClearColor = Color.Black;
+
+            //  Create the GraphicsDeviceManager instance.
+            Graphics = new GraphicsDeviceManager(this);
 
             //  Listen for the graphics events
-            Graphics.GraphicsDeviceCreated += OnGraphicsDeviceCreated;
-            Graphics.GraphicsDeviceReset += OnGraphicsDeviceReset;
-            Graphics.ClientSizeChanged += OnClientSizeChanged;
+            Graphics.DeviceCreated += OnGraphicsDeviceCreated;
+            Graphics.DeviceReset += OnGraphicsDeviceReset;
+            Window.ClientSizeChanged += OnClientSizeChanged;
+            //Graphics.ClientSizeChanged += OnClientSizeChanged;
+
+            //  Set graphics options
+            Graphics.SynchronizeWithVerticalRetrace = graphicsOptions.SynchronizeWithVerticalRetrace;
+            Graphics.PreferMultiSampling = graphicsOptions.PreferMultiSampling;
+            Graphics.GraphicsProfile = graphicsOptions.GraphicsProfile;
+            Graphics.PreferredBackBufferFormat = graphicsOptions.PreferredBackBufferFormat;
+            Graphics.PreferredDepthStencilFormat = graphicsOptions.PrefferedDepthStencilFormat;
+            Window.AllowUserResizing = graphicsOptions.AllowUserResizeWindow;
+            IsMouseVisible = graphicsOptions.IsMouseVisible;
+
 
 #if DEBUG
             //  Instantiate the fps counter
@@ -160,7 +291,18 @@ namespace Tiny
         /// </summary>
         protected virtual void OnClientSizeChanged(object sender, EventArgs e)
         {
-            //Scene.HandleClientSizeChanged();
+            if (Window.ClientBounds.Width > 0 && Window.ClientBounds.Height > 0 && !_isResizing)
+            {
+                _isResizing = true;
+
+                Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+                Graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+
+                UpdateView();
+
+                _isResizing = false;
+            }
+
             if (_activeScene != null)
             {
                 _activeScene.HandleClientSizeChanged();
@@ -189,7 +331,7 @@ namespace Tiny
         /// </summary>
         protected virtual void OnGraphicsDeviceCreated(object sender, EventArgs e)
         {
-            //Scene.HandleGraphicsDeviceCreated();
+            UpdateView();
             if (_activeScene != null)
             {
                 _activeScene.HandleGraphicsDeviceCreated();
@@ -219,7 +361,8 @@ namespace Tiny
         /// </summary>
         protected virtual void OnGraphicsDeviceReset(object sender, EventArgs e)
         {
-            //Scene.HandleGraphicsDeviceReset();
+            UpdateView();
+
             if (_activeScene != null)
             {
                 _activeScene.HandleGraphicsDeviceReset();
@@ -239,6 +382,150 @@ namespace Tiny
             {
                 _transitionIn.HandleGraphicsDeviceReset();
             }
+        }
+
+        /// <summary>
+        ///     Sets the initial resolution values for the game.
+        /// </summary>
+        /// <remarks>
+        ///     This should only be called once at the start of the <c>Initialize()</c>
+        ///     method for your game.
+        /// </remarks>
+        /// <param name="width">
+        ///     A <see cref="int"/> value that describes the width, in pixels, of
+        ///     the virtual rendering resolution of the game.
+        /// </param>
+        /// <param name="height">
+        ///     A <see cref="int"/> value that describes the height, in pixels, of
+        ///     the virtual rendering reoslution of the game.
+        /// </param>
+        /// <param name="windowWidth">
+        ///     A <see cref="int"/> value that describes the width, in pixels, of
+        ///     the rendering resolution of the back buffer.
+        /// </param>
+        /// <param name="windowHeight">
+        ///     A <see cref="int"/> value that describes the height, in pixels, of
+        ///     the rendering resolution of the back buffer.
+        /// </param>
+        /// <param name="fullscreen">
+        ///     A <see cref="bool"/> value that indicates if the graphics should be presented
+        ///     in fullscreen mode.
+        /// </param>
+        protected void SetInitialResolution(int width, int height, int windowWidth, int windowHeight, bool fullscreen)
+        {
+            //  Vaidate and set the values.
+            _vResolution.X = windowWidth > 0 ? windowWidth
+                : throw new ArgumentOutOfRangeException("The client widnow width must be greater than 0", nameof(windowWidth));
+            _vResolution.Y = windowHeight > 0 ? windowHeight
+                : throw new ArgumentOutOfRangeException("The client window height must be greater than 0", nameof(windowHeight));
+            _resolution.X = width > 0 ? width
+                : throw new ArgumentOutOfRangeException("The game width must be greater than 0", nameof(width));
+            _resolution.Y = height > 0 ? height
+                : throw new ArgumentOutOfRangeException("The game height must be greater than 0", nameof(height));
+
+            //  Perform full screen check and set values based on it.
+            if (fullscreen)
+            {
+                Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                Graphics.IsFullScreen = true;
+            }
+            else
+            {
+                Graphics.PreferredBackBufferWidth = windowWidth;
+                Graphics.PreferredBackBufferHeight = windowHeight;
+                Graphics.IsFullScreen = false;
+            }
+
+            //  Apply the changes.
+            Graphics.ApplyChanges();
+        }
+
+        /// <summary>
+        ///     Sets the graphics to render the game in windowed mode.
+        /// </summary>
+        /// <param name="width">
+        ///     An <see cref="int"/> value that describes the width, in pixels,
+        ///     to set the game window to.
+        /// </param>
+        /// <param name="height">
+        ///     A <see cref="int"/> value taht describes the height, in pixels,
+        ///     to set the game window to.
+        /// </param>
+        public static void SetWindowed(int width, int height)
+        {
+            _isResizing = true;
+
+            Graphics.PreferredBackBufferWidth = width > 0 ? width
+                : throw new ArgumentOutOfRangeException(nameof(width), "The client window width must be greater than zero");
+            Graphics.PreferredBackBufferHeight = height > 0 ? height
+                : throw new ArgumentOutOfRangeException(nameof(height), "The client window height must be greater than zero");
+            Graphics.IsFullScreen = false;
+
+            Graphics.ApplyChanges();
+
+            _isResizing = false;
+        }
+
+        /// <summary>
+        ///     Sets the grpahics to render the game in fullscreen mode.
+        /// </summary>
+        public static void SetFullscren()
+        {
+            _isResizing = true;
+
+            Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            Graphics.IsFullScreen = true;
+
+            Graphics.ApplyChanges();
+
+            _isResizing = false;
+        }
+
+        /// <summary>
+        ///     Updates the values for the graphics view such as the screen matrix and
+        ///     viewport to provide independent resolution rendering.
+        /// </summary>
+        /// <!--
+        ///     The method for indpendent resolution rendering comes from the Monocle Engine
+        ///     developed by Matt Thorson and used in the games Towerfall and Celeste. The
+        ///     Monocle Engine was originally found at https://bitbucket.org/MattThorson/monocle-engine
+        ///     however the source code does not seem to be available any more at this linke.
+        ///     
+        ///     Monocole is licensed under the MIT License.
+        /// -->
+        private static void UpdateView()
+        {
+            float screenWidth = Graphics.GraphicsDevice.PresentationParameters.BackBufferWidth;
+            float screenHeight = Graphics.GraphicsDevice.PresentationParameters.BackBufferHeight;
+
+            if (screenWidth / _resolution.X > screenHeight / _resolution.Y)
+            {
+                _vResolution.X = (int)(screenHeight / _resolution.Y * _resolution.X);
+                _vResolution.Y = (int)screenHeight;
+            }
+            else
+            {
+                _vResolution.X = (int)screenWidth;
+                _vResolution.Y = (int)(screenWidth / _resolution.X * _resolution.Y);
+            }
+
+            float aspect = _vResolution.Y / (float)_vResolution.X;
+            _vResolution.X -= _viewPadding * 2;
+            _vResolution.Y -= (int)(aspect * _viewPadding * 2);
+
+            ScreenMatrix = Matrix.CreateScale(_vResolution.X / (float)_resolution.X);
+
+            Viewport = new Viewport
+            {
+                X = (int)(screenWidth / 2 - _vResolution.X / 2),
+                Y = (int)(screenHeight / 2 - _vResolution.Y / 2),
+                Width = _vResolution.X,
+                Height = _vResolution.Y,
+                MinDepth = 0,
+                MaxDepth = 1
+            };
         }
 
         /// <summary>
@@ -263,8 +550,8 @@ namespace Tiny
         protected override void LoadContent()
         {
             base.LoadContent();
-            SpriteBatch = new SpriteBatch(Graphics.Device);
-            SpriteBatchExtensions.Initialize(Graphics.Device);
+            SpriteBatch = new SpriteBatch(Instance.GraphicsDevice);
+            SpriteBatchExtensions.Initialize(Instance.GraphicsDevice);
 
         }
 
@@ -285,11 +572,11 @@ namespace Tiny
 
 #if DEBUG
             //  Update the FPS instance.
-            _fps.Update(gameTime);
+            _fps.Update();
 #endif
 
             //  Update the input state
-            Input.Update(Time);
+            Input.Update();
 
             //  If there is an active transition, then we need to update it; otherwise, if there
             //  is no active transition, but there is a next scene to switch to, switch to that
@@ -360,15 +647,17 @@ namespace Tiny
 
 
             //  Prepare the grpahics device for the final render.
-            Graphics.SetViewport();
-            Graphics.Clear();
+            //Graphics.SetViewport();
+            //Graphics.Clear();
+            GraphicsDevice.Viewport = Viewport;
+            GraphicsDevice.Clear(ClearColor);
 
             DrawAlways();
 
             //  Begin the spritebatch
             SpriteBatch.Begin(blendState: BlendState.AlphaBlend,
                               samplerState: SamplerState.PointClamp,
-                              transformMatrix: Graphics.ScreenMatrix);
+                              transformMatrix: ScreenMatrix);
 
             //  If there is an active transition we draw its render target; otherwise, we draw 
             //  the render target of the active scene

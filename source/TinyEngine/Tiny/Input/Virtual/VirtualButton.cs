@@ -126,7 +126,7 @@ namespace Tiny
         /// <param name="time">
         ///     The timing values provided by TinyEngine.
         /// </param>
-        public override void Update(Time time)
+        public override void Update()
         {
             _consumePress = false;
         }

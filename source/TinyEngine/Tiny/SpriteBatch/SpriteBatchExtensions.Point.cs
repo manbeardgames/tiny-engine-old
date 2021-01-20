@@ -104,9 +104,9 @@ namespace Tiny
         public static void DrawPoint(this SpriteBatch spriteBatch, Vector2 pos, Color color)
         {
 
-            spriteBatch.Draw(texture: Pixel,
+            spriteBatch.Draw(texture: Pixel.Texture,
                              position: pos,
-                             sourceRectangle: new Rectangle(0, 0, Pixel.Width, Pixel.Height),
+                             sourceRectangle: Pixel.SourceRectangle,
                              color: color,
                              rotation: 0.0f,
                              origin: Vector2.Zero,

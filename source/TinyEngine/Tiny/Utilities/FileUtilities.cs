@@ -10,9 +10,9 @@ namespace Tiny
     {
         public static readonly string AssemblyDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-        public static string GetContentRelativePath(string contentDirectory, string file)
+        public static string GetContentRelativePath(string file)
         {
-            return Path.Combine(AssemblyDirectory, contentDirectory, file);
+            return Path.Combine(Engine.Instance.ContentDirectory, file);
         }
     }
 }

@@ -108,11 +108,11 @@ namespace Tiny
         ///     Updates this <see cref="VirtualJoystick"/> instance.
         /// </summary>
         /// <param name="time"></param>
-        public override void Update(Time time)
+        public override void Update()
         {
             for (int i = 0; i < Nodes.Count; i++)
             {
-                Nodes[i].Update(time);
+                Nodes[i].Update();
             }
 
             PreviousValue = Value;

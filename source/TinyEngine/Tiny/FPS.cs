@@ -84,9 +84,9 @@ namespace Tiny
         ///     of the timing values provided by the MonOGame framework during
         ///     an update cycle.
         /// </param>
-        public void Update(GameTime gameTime)
+        public void Update()
         {
-            _elapsed += gameTime.ElapsedGameTime;
+            _elapsed += Engine.Time.ElapsedGameTime;
 
             if (_elapsed > _oneSecond)
             {

@@ -39,7 +39,7 @@ namespace Tiny
         /// </summary>
         /// <param name="device"></param>
         /// <param name="xmlFilePath"></param>
-        public void Load(GraphicsDevice device, string xmlFilePath)
+        public void Load(string xmlFilePath)
         {
             //  Load the XML Document from the file
             XmlDocument document = Xml.LoadXmlDocument(xmlFilePath);
@@ -56,7 +56,7 @@ namespace Tiny
             imagePath = Path.Combine(directory, imagePath);
 
             //  Load the texture
-            Texture = new TinyTexture(TextureUtilities.FromFile(device, imagePath, preMultiplyAlpha: true));
+            Texture = new TinyTexture(TextureUtilities.FromFile(imagePath, preMultiplyAlpha: true));
 
             //  Process each of the <sprite> child elements.
             foreach (XmlElement spriteElement in textureAtlasElement)

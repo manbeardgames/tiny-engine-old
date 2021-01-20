@@ -31,18 +31,11 @@ namespace Tiny
         ///     as the tilesize value for this transition. This constructor will only
         ///     work if you have set that value. 
         /// </remarks>
-        /// <param name="engine">
-        ///     A reference to the <see cref="Engine"/> instance.
-        /// </param>
-        public EvenOddTileTransition(Engine engine)
-            : this(engine, engine.Graphics.PixelPerUnit, TimeSpan.FromSeconds(1)) { }
+        public EvenOddTileTransition() : this(Engine.PixelPerUnit, TimeSpan.FromSeconds(1)) { }
 
         /// <summary>
         ///     Creates a new <see cref="EvenOddTileTransition"/> instance.
         /// </summary>
-        /// <param name="engine">
-        ///     A reference to the <see cref="Engine"/> instance.
-        /// </param>
         /// <param name="tileSize">
         ///     A <see cref="int"/> value that defines the width and height,
         ///     in pixels, of the generated tiles when transitioning.
@@ -51,8 +44,7 @@ namespace Tiny
         ///     A <see cref="TimeSpan"/> value that represents the total amount of
         ///     time this transition should take to complete.
         /// </param>
-        public EvenOddTileTransition(Engine engine, int tileSize, TimeSpan transitionTime)
-            : base(engine, transitionTime)
+        public EvenOddTileTransition(int tileSize, TimeSpan transitionTime) : base(transitionTime)
         {
             _transitionHalfTime = TransitionTime.TotalSeconds / 2;
             _tileSize = tileSize;
@@ -62,10 +54,10 @@ namespace Tiny
         ///     Starts this transition.
         /// </summary>
         /// <param name="sceneTexture">
-        ///     A reference to the <see cref="RenderTarget2D"/> instance that the scene being
+        ///     A reference to the <see cref="TinyRenderTarget"/> instance that the scene being
         ///     transitioned is rendered to.
         /// </param>
-        public override void Start(RenderTarget2D sceneTexture)
+        public override void Start(TinyRenderTarget sceneTexture)
         {
             base.Start(sceneTexture);
 
